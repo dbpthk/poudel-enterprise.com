@@ -1,8 +1,18 @@
 @import "tailwindcss";
 
+/* CSS Variables from Tailwind Config */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-primary: #1f2937; /* Charcoal Gray */
+  --color-secondary: #f9fafb; /* Off-White */
+  --color-accent: #f59e0b; /* Golden accent */
+  --color-highlight: #ec4899; /* Fashion Pink */
+  --color-text-primary: #111827;
+  --color-text-secondary: #6b7280;
+
+  /* Gradients (optional) */
+  --gradient-hero: linear-gradient(135deg, #1f2937 0%, #6b7280 100%);
+  --gradient-cta: linear-gradient(90deg, #fbbf24 0%, #ec4899 100%);
+  --gradient-hover: linear-gradient(90deg, #fde68a 0%, #f472b6 100%);
 }
 
 /* Global Styles */
@@ -34,8 +44,41 @@
   font-weight: 500;
 }
 
+/* Body defaults */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-secondary);
+  color: var(--color-text-primary);
+}
+
+/* Custom Tailwind-like Utilities */
+.text-color-primary {
+  color: var(--color-text-primary);
+}
+
+.text-color-secondary {
+  color: var(--color-text-secondary);
+}
+
+.bg-primary {
+  background-color: var(--color-primary);
+}
+
+.bg-accent {
+  background-color: var(--color-accent);
+}
+
+.bg-highlight {
+  background-color: var(--color-highlight);
+}
+
+.bg-gradient-hero {
+  background-image: var(--gradient-hero);
+}
+
+.bg-gradient-cta {
+  background-image: var(--gradient-cta);
+}
+
+.bg-gradient-hover {
+  background-image: var(--gradient-hover);
 }
