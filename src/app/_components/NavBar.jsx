@@ -125,7 +125,7 @@ const Navbar = () => {
                       {item.label}
                     </span>
                     <div
-                      className={`absolute bottom-3 left-1/2 transform -translate-x-1/2 h-1 w-4/5 bg-gray-600 rounded-full transition-all duration-300 ${
+                      className={`absolute bottom-3 left-1/2 transform -translate-x-1/2 h-1 w-4/5 bg-accent rounded-full transition-all duration-300 ${
                         isActive
                           ? "opacity-100 scale-x-100"
                           : "opacity-0 scale-x-0 group-hover:opacity-100 group-hover:scale-x-100"
