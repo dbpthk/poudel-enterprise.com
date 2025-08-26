@@ -93,12 +93,6 @@ const Contact = () => {
     },
   ];
 
-  const businessHours = [
-    { day: "Monday - Friday", hours: "9:00 AM - 6:00 PM" },
-    { day: "Saturday", hours: "10:00 AM - 4:00 PM" },
-    { day: "Sunday", hours: "Closed" },
-  ];
-
   const whyContactUs = [
     {
       icon: <MessageSquare className="w-7 h-7 text-white" />,
@@ -384,7 +378,7 @@ const Contact = () => {
                         Business Hours
                       </h4>
                       <div className="space-y-1">
-                        {businessHours.map((schedule, index) => (
+                        {contactInfo.businessHours.map((schedule, index) => (
                           <div
                             key={index}
                             className="flex justify-between gap-3 text-sm"
