@@ -13,6 +13,7 @@
   --gradient-hero: linear-gradient(135deg, #1f2937 0%, #6b7280 100%);
   --gradient-cta: linear-gradient(90deg, #fbbf24 0%, #ec4899 100%);
   --gradient-hover: linear-gradient(90deg, #fde68a 0%, #f472b6 100%);
+  --gradient-light: linear-gradient(to right, #eff6ff, #e0e7ff);
 }
 
 /* Global Styles */
@@ -59,6 +60,10 @@ body {
   color: var(--color-text-secondary);
 }
 
+.text-color-accent {
+  color: var(--color-accent);
+}
+
 .bg-primary {
   background-color: var(--color-primary);
 }
@@ -81,4 +86,7 @@ body {
 
 .bg-gradient-hover {
   background-image: var(--gradient-hover);
+}
+.bg-gradient-light {
+  background-image: var(--gradient-light);
 }
