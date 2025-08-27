@@ -412,14 +412,14 @@ const Contact = () => {
               className="text-3xl lg:text-4xl font-bold mb-6"
               style={{ color: "#1F2937" }}
             >
-              Why Contact Us?
+              💬 Let’s Stay Connected
             </h2>
             <p
               className="text-lg max-w-2xl mx-auto"
               style={{ color: "#4B5563" }}
             >
-              We're committed to providing exceptional service and support to
-              all our customers.
+              We’re here to help, answer your questions, and make sure you get
+              the support you need—quickly and hassle-free.
             </p>
           </div>
 
