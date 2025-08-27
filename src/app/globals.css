@@ -14,6 +14,7 @@
   --gradient-cta: linear-gradient(90deg, #fbbf24 0%, #ec4899 100%);
   --gradient-hover: linear-gradient(90deg, #fde68a 0%, #f472b6 100%);
   --gradient-light: linear-gradient(to right, #eff6ff, #e0e7ff);
+  --gradient-footer: linear-gradient(90deg, #1f2937, #4a148c, #6b7280);
 }
 
 /* Global Styles */
@@ -78,6 +79,9 @@ body {
 
 .bg-gradient-hero {
   background-image: var(--gradient-hero);
+}
+.bg-gradient-footer {
+  background-image: var(--gradient-footer);
 }
 
 .bg-gradient-cta {
