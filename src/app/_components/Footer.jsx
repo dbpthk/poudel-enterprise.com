@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import ScrollToTopButton from "./ScrollToTopButton";
 import { toast } from "sonner";
 import { contactInfo } from "../_config/contact";
 
@@ -175,8 +174,6 @@ const Footer = () => {
         className="absolute bottom-20 left-10 w-16 h-16 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full opacity-20 float"
         style={{ animationDelay: "2s" }}
       ></div>
-
-      <ScrollToTopButton />
     </footer>
   );
 };
