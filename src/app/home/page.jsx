@@ -1,22 +1,14 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { products } from "../_config/assets";
 import Link from "next/link";
+import Image from "next/image";
+import { useContext } from "react";
+import { ShopContext } from "../_context/ShopContext";
 
 const Home = () => {
-  const [imageErrors, setImageErrors] = useState({});
-  const [imageLoads, setImageLoads] = useState({});
-
-  const handleImageError = (imagePath) => {
-    console.error(`Failed to load image: ${imagePath}`);
-    setImageErrors((prev) => ({ ...prev, [imagePath]: true }));
-  };
-
-  const handleImageLoad = (imagePath) => {
-    console.log(`Successfully loaded image: ${imagePath}`);
-    setImageLoads((prev) => ({ ...prev, [imagePath]: true }));
-  };
+  const { handleImageError, handleImageLoad } = useContext(ShopContext);
 
   // Get best sellers (products with bestseller: true)
   const bestSellers = products
@@ -27,13 +19,6 @@ const Home = () => {
   const latestCollection = [...products]
     .sort((a, b) => b.date - a.date)
     .slice(0, 8);
-
-  useEffect(() => {
-    console.log("Home component mounted");
-    console.log("Total products:", products.length);
-    console.log("Best sellers:", bestSellers.length);
-    console.log("Latest collection:", latestCollection.length);
-  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -93,17 +78,20 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
             {bestSellers.map((product) => (
               <div
                 key={product._id}
                 className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden"
               >
-                <div className="relative overflow-hidden">
+                <div className="relative overflow-hidden h-70">
                   {product.image && product.image.length > 0 && (
-                    <img
+                    <Image
                       src={product.image[0]}
                       alt={product.name}
+                      width={400}
+                      height={320}
+                      unoptimized={true}
                       className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-500"
                       onError={() => handleImageError(product.image[0])}
                       onLoad={() => handleImageLoad(product.image[0])}
@@ -117,10 +105,10 @@ const Home = () => {
                 </div>
 
                 <div className="p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                  <h3 className="text-md md:text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
                     {product.name}
                   </h3>
-                  <p className="text-sm text-gray-500 mb-3 capitalize">
+                  <p className="text-xs md:text-sm text-gray-500 mb-3 capitalize">
                     {product.category} • {product.subCategory}
                   </p>
                   <div className="flex items-center justify-between">
@@ -136,7 +124,7 @@ const Home = () => {
           <div className="text-center mt-12">
             <Link
               href="/collection"
-              className="inline-flex items-center px-8 py-4 bg-gray-900 text-white font-semibold rounded-full hover:bg-gray-800 transition-all duration-300 transform hover:scale-105 shadow-lg"
+              className="inline-flex items-center px-8 py-4 bg-gradient-hero text-white font-semibold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
               View All Best Sellers
               <svg
@@ -169,17 +157,20 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
             {latestCollection.map((product) => (
               <div
                 key={product._id}
                 className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden"
               >
-                <div className="relative overflow-hidden">
+                <div className="relative overflow-hidden h-70">
                   {product.image && product.image.length > 0 && (
-                    <img
+                    <Image
                       src={product.image[0]}
                       alt={product.name}
+                      width={400}
+                      height={320}
+                      unoptimized={true}
                       className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-500"
                       onError={() => handleImageError(product.image[0])}
                       onLoad={() => handleImageLoad(product.image[0])}
@@ -193,10 +184,10 @@ const Home = () => {
                 </div>
 
                 <div className="p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                  <h3 className="text-md md:text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
                     {product.name}
                   </h3>
-                  <p className="text-sm text-gray-500 mb-3 capitalize">
+                  <p className="text-xs md:text-sm text-gray-500 mb-3 capitalize">
                     {product.category} • {product.subCategory}
                   </p>
                   <div className="flex items-center justify-between">
@@ -212,7 +203,7 @@ const Home = () => {
           <div className="text-center mt-12">
             <Link
               href="/collection"
-              className="inline-flex items-center px-8 py-4 bg-gradient-footer text-white font-semibold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
+              className="inline-flex items-center px-8 py-4 bg-gradient-hero text-white font-semibold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
               Explore Latest Collection
               <svg
