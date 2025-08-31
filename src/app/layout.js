@@ -4,6 +4,7 @@ import NavBar from "./_components/NavBar";
 import { Toaster } from "sonner";
 import Footer from "./_components/Footer";
 import ScrollToTopButton from "./_components/ScrollToTopButton";
+import Provider from "./Provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,11 +30,13 @@ export default function RootLayout({ children }) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NavBar />
-        {children}
-        <Toaster richColors position="top-right" />
-        <Footer />
-        <ScrollToTopButton />
+        <Provider>
+          <NavBar />
+          {children}
+          <Toaster richColors position="top-right" />
+          <Footer />
+          <ScrollToTopButton />
+        </Provider>
       </body>
     </html>
   );
