@@ -245,39 +245,38 @@ const Collection = () => {
           >
             {filteredProducts.length > 0 ? (
               filteredProducts.map((product) => (
-                <div
-                  key={product._id}
-                  className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden "
-                >
-                  <div className="overflow-hidden h-60">
-                    {product.image && product.image.length > 0 && (
-                      <Image
-                        src={product.image[0]}
-                        alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-                        width={400}
-                        height={320}
-                        unoptimized={true}
-                        onError={() => handleImageError(product.image[0])}
-                        onLoad={() => handleImageLoad(product.image[0])}
-                      />
-                    )}
-                  </div>
+                <Link key={product._id} href={`/collection/${product._id}`}>
+                  <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden ">
+                    <div className="overflow-hidden h-60">
+                      {product.image && product.image.length > 0 && (
+                        <Image
+                          src={product.image[0]}
+                          alt={product.name}
+                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          width={400}
+                          height={320}
+                          unoptimized={true}
+                          onError={() => handleImageError(product.image[0])}
+                          onLoad={() => handleImageLoad(product.image[0])}
+                        />
+                      )}
+                    </div>
 
-                  <div className="p-6">
-                    <h3 className="text-md md:text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
-                      {product.name}
-                    </h3>
-                    <p className="text-xs md:text-sm text-gray-500 mb-3 capitalize">
-                      {product.category} • {product.subCategory}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-2xl font-bold text-gray-900">
-                        ${product.price}
-                      </span>
+                    <div className="p-6">
+                      <h3 className="text-md md:text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                        {product.name}
+                      </h3>
+                      <p className="text-xs md:text-sm text-gray-500 mb-3 capitalize">
+                        {product.category} • {product.subCategory}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <span className="text-2xl font-bold text-gray-900">
+                          ${product.price}
+                        </span>
+                      </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))
             ) : (
               <div className="w-full flex flex-col items-center justify-center py-20">

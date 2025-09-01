@@ -2,12 +2,14 @@
 import { createContext, useContext, useState } from "react";
 
 export const ShopContext = createContext();
+import { products } from "../_config/assets";
 
 export const ShopProvider = ({ children }) => {
   const [imageErrors, setImageErrors] = useState({});
   const [imageLoads, setImageLoads] = useState({});
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
+  const currency = "$";
 
   const handleImageError = (imagePath) => {
     console.error(`Failed to load image: ${imagePath}`);
@@ -30,6 +32,8 @@ export const ShopProvider = ({ children }) => {
         setSearch,
         showSearch,
         setShowSearch,
+        products,
+        currency,
       }}
     >
       {children}

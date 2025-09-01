@@ -28,7 +28,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`scrollSmooth ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Provider>
           <NavBar />
