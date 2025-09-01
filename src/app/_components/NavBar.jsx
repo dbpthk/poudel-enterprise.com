@@ -5,8 +5,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, User, ShoppingCart, Search, X, ChevronDown } from "lucide-react";
+import { useShopContext } from "../_context/ShopContext";
 
 const Navbar = () => {
+  const { search, setSearch } = useShopContext();
+  const [inputValue, setInputValue] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -141,7 +144,7 @@ const Navbar = () => {
           <div className="flex items-center gap-3">
             {/* Search */}
             {pathname === "/collection" && (
-              <div ref={searchRef} className="relative">
+              <div ref={searchRef} className="relative w-full sm:w-auto">
                 <button
                   onClick={() => setSearchOpen(!searchOpen)}
                   className="p-3 rounded-xl bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-300 hover:shadow-lg hover:scale-105"
@@ -149,11 +152,18 @@ const Navbar = () => {
                   <Search size={20} className="text-gray-600" />
                 </button>
                 {searchOpen && (
-                  <div className="absolute right-0 top-full mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-4 min-w-[300px] z-50">
+                  <div className="absolute -right-40 sm:right-0 top-full mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-4 min-w-[300px] z-50">
                     <div className="flex items-center gap-3 mb-3">
                       <Search size={20} className="text-gray-400" />
                       <input
                         type="text"
+                        value={inputValue}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            setSearch(inputValue);
+                          }
+                        }}
                         placeholder="Search products..."
                         className="flex-1 bg-transparent border-none outline-none text-gray-700 placeholder-gray-400"
                         autoFocus

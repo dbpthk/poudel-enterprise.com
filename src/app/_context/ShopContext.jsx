@@ -6,6 +6,8 @@ export const ShopContext = createContext();
 export const ShopProvider = ({ children }) => {
   const [imageErrors, setImageErrors] = useState({});
   const [imageLoads, setImageLoads] = useState({});
+  const [search, setSearch] = useState("");
+  const [showSearch, setShowSearch] = useState(false);
 
   const handleImageError = (imagePath) => {
     console.error(`Failed to load image: ${imagePath}`);
@@ -19,7 +21,16 @@ export const ShopProvider = ({ children }) => {
 
   return (
     <ShopContext.Provider
-      value={{ imageErrors, imageLoads, handleImageError, handleImageLoad }}
+      value={{
+        imageErrors,
+        imageLoads,
+        handleImageError,
+        handleImageLoad,
+        search,
+        setSearch,
+        showSearch,
+        setShowSearch,
+      }}
     >
       {children}
     </ShopContext.Provider>
