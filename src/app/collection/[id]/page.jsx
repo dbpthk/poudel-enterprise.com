@@ -106,9 +106,9 @@ const Product = () => {
           <button
             onClick={() => addToCart(productData._id, size)}
             disabled={!size}
-            className={`px-6 py-3 rounded-lg font-medium ${
+            className={`px-6 py-3 rounded-lg font-medium  ${
               size
-                ? "bg-black text-white hover:bg-gray-800"
+                ? "bg-black text-white hover:bg-gray-800 cursor-pointer"
                 : "bg-gray-300 text-gray-600 cursor-not-allowed"
             }`}
           >

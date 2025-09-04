@@ -8,7 +8,7 @@ import { Menu, User, ShoppingCart, Search, X, ChevronDown } from "lucide-react";
 import { useShopContext } from "../_context/ShopContext";
 
 const Navbar = () => {
-  const { search, setSearch } = useShopContext();
+  const { search, setSearch, getCartCount } = useShopContext();
   const [inputValue, setInputValue] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -32,6 +32,7 @@ const Navbar = () => {
     { label: "Logout", icon: "🚪", action: "logout" },
   ];
 
+  console.log(getCartCount());
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
@@ -213,15 +214,17 @@ const Navbar = () => {
             </div>
 
             {/* Cart */}
-            <button className="relative p-3 rounded-xl bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-300 hover:shadow-lg hover:scale-105 group">
-              <ShoppingCart
-                size={20}
-                className="text-gray-600 group-hover:text-gray-800 transition-colors"
-              />
-              <span className="absolute -top-2 -right-2 w-6 h-6 text-xs font-bold flex items-center justify-center text-white bg-gray-600 rounded-full shadow-lg animate-pulse">
-                0
-              </span>
-            </button>
+            <Link href={"/cart"}>
+              <button className="relative p-3 rounded-xl bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-300 hover:shadow-lg hover:scale-105 group">
+                <ShoppingCart
+                  size={20}
+                  className="text-gray-600 group-hover:text-gray-800 transition-colors"
+                />
+                <span className="absolute -top-2 -right-2 w-6 h-6 text-xs font-bold flex items-center justify-center text-white bg-gray-600 rounded-full shadow-lg animate-pulse">
+                  {getCartCount()}
+                </span>
+              </button>
+            </Link>
 
             {/* Mobile Menu */}
             <button

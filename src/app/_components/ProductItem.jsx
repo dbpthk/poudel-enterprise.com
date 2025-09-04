@@ -18,6 +18,7 @@ const ProductItem = ({ id, image, name, price }) => {
             alt={name}
             height={100}
             width={100}
+            unoptimized
           />
         </div>
         <div className="p-4">
