@@ -179,7 +179,7 @@ const Navbar = () => {
             )}
 
             {/* Profile */}
-            <div ref={profileRef} className="relative">
+            {/* <div ref={profileRef} className="relative">
               <button
                 onClick={() => setProfileOpen(!profileOpen)}
                 className="p-3 rounded-xl bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-300 hover:shadow-lg hover:scale-105 group"
@@ -211,7 +211,7 @@ const Navbar = () => {
                   ))}
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* Cart */}
             <Link href={"/cart"}>
@@ -239,7 +239,7 @@ const Navbar = () => {
 
       {/* Mobile Sidebar */}
       <div
-        className={`fixed inset-0 bg-black/50 backdrop-blur-sm transition-all duration-300 lg:hidden z-50 ${
+        className={`fixed z-50 inset-0 bg-black/50 backdrop-blur-sm transition-all duration-300 lg:hidden ${
           mobileOpen ? "opacity-100 visible" : "opacity-0 invisible"
         }`}
         onClick={() => setMobileOpen(false)}
@@ -262,7 +262,7 @@ const Navbar = () => {
             </button>
           </div>
 
-          <nav className="p-6 space-y-2">
+          <nav className="p-6 space-y-2 bg-white">
             {navItems.map((item) => {
               const isActive = pathname === item.path;
               return (
@@ -272,8 +272,8 @@ const Navbar = () => {
                   onClick={() => setMobileOpen(false)}
                 >
                   <div
-                    className={`flex items-center gap-4 px-4 py-4 rounded-xl transition-all duration-200 ${
-                      isActive ? "bg-gray-100 shadow-md" : "hover:bg-gray-50"
+                    className={`flex items-center gap-4 mb-2 px-4 py-4 rounded-xl transition-all duration-200 ${
+                      isActive ? "bg-gray-100 shadow-md" : "hover:bg-gray-100"
                     }`}
                   >
                     <span className="text-xl">{item.icon}</span>
@@ -294,7 +294,7 @@ const Navbar = () => {
           </nav>
 
           {/* Mobile Profile Section */}
-          <div className="p-6 border-t border-gray-200">
+          {/* <div className="p-6 border-t bg-white border-gray-200">
             <div className="space-y-2">
               {profileMenuItems.map((item, index) => (
                 <button
@@ -312,7 +312,7 @@ const Navbar = () => {
                 </button>
               ))}
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </header>

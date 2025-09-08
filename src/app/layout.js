@@ -33,7 +33,7 @@ export default function RootLayout({ children }) {
         <Provider>
           <NavBar />
           {children}
-          <Toaster richColors position="top-left" />
+          <Toaster richColors position="top-right" />
           <Footer />
           <ScrollToTopButton />
         </Provider>

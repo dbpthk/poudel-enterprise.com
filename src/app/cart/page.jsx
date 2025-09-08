@@ -13,7 +13,7 @@ const CartSummary = () => {
   } = useShopContext();
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto p-6 min-h-[300px]">
       <h1
         className="text-4xl lg:text-6xl font-bold leading-tight w-full text-center mb-10"
         style={{ color: "#1F2937" }}

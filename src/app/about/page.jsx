@@ -58,7 +58,7 @@ const About = () => {
     },
     {
       id: 2,
-      name: "Deepak Poudel",
+      name: "Deepa Poudel",
       role: "Head of Operations",
       description:
         "Operations expert ensuring smooth delivery and exceptional customer service.",
