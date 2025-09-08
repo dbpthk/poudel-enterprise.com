@@ -257,7 +257,7 @@ const Collection = () => {
                       )}
                     </div>
 
-                    <div className="p-6 md:min-h-[200px]">
+                    <div className="p-6 min-h-[170px] md:min-h-[200px]">
                       <h3 className="text-md md:text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
                         {product.name}
                       </h3>

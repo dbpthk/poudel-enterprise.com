@@ -55,7 +55,7 @@ const CartSummary = () => {
             </div>
 
             {/* Right Side: Quantity Controls + Remove */}
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col sm:flex-row items-center gap-4">
               {/* Increase/Decrease Section */}
               <div className="flex items-center gap-3">
                 <button
