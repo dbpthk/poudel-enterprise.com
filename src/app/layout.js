@@ -20,7 +20,11 @@ export const metadata = {
   title: "Poudel Enterprise",
   description: "Poudel Enterprise - Your e-commerce platform",
   icons: {
-    icon: "/logo.png",
+    icon: [
+      { url: "/favicon.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon.png" }, // fallback
+    ],
   },
 };
 
