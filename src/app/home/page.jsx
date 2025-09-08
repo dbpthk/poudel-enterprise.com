@@ -80,67 +80,44 @@ const Home = () => {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
             {bestSellers.map((product) => (
-              <div
-                key={product._id}
-                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden"
-              >
-                <div className="relative overflow-hidden h-70">
-                  {product.image && product.image.length > 0 && (
-                    <Image
-                      src={product.image[0]}
-                      alt={product.name}
-                      width={400}
-                      height={320}
-                      unoptimized={true}
-                      className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-500"
-                      onError={() => handleImageError(product.image[0])}
-                      onLoad={() => handleImageLoad(product.image[0])}
-                    />
-                  )}
-                  <div className="absolute top-4 right-4">
-                    <span className="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
-                      Best Seller
-                    </span>
+              <Link key={product._id} href={`/collection/${product._id}`}>
+                <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
+                  <div className="relative overflow-hidden h-70">
+                    {product.image && product.image.length > 0 && (
+                      <Image
+                        src={product.image[0]}
+                        alt={product.name}
+                        width={400}
+                        height={320}
+                        unoptimized={true}
+                        className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-500"
+                        onError={() => handleImageError(product.image[0])}
+                        onLoad={() => handleImageLoad(product.image[0])}
+                      />
+                    )}
+                    <div className="absolute top-4 right-4">
+                      <span className="px-3 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
+                        Best Seller
+                      </span>
+                    </div>
                   </div>
-                </div>
 
-                <div className="p-6">
-                  <h3 className="text-md md:text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
-                    {product.name}
-                  </h3>
-                  <p className="text-xs md:text-sm text-gray-500 mb-3 capitalize">
-                    {product.category} • {product.subCategory}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-gray-900">
-                      ${product.price}
-                    </span>
+                  <div className="p-6">
+                    <h3 className="text-md md:text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                      {product.name}
+                    </h3>
+                    <p className="text-xs md:text-sm text-gray-500 mb-3 capitalize">
+                      {product.category} • {product.subCategory}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-2xl font-bold text-gray-900">
+                        ${product.price}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
-          </div>
-
-          <div className="text-center mt-12">
-            <Link
-              href="/collection"
-              className="inline-flex items-center px-8 py-4 bg-gradient-hero text-white font-semibold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
-            >
-              View All Best Sellers
-              <svg
-                className="ml-2 w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M17 8l4 4m0 0l-4 4m4-4H3"
-                />
-              </svg>
-            </Link>
           </div>
         </div>
       </section>
@@ -159,44 +136,43 @@ const Home = () => {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
             {latestCollection.map((product) => (
-              <div
-                key={product._id}
-                className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden"
-              >
-                <div className="relative overflow-hidden h-70">
-                  {product.image && product.image.length > 0 && (
-                    <Image
-                      src={product.image[0]}
-                      alt={product.name}
-                      width={400}
-                      height={320}
-                      unoptimized={true}
-                      className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-500"
-                      onError={() => handleImageError(product.image[0])}
-                      onLoad={() => handleImageLoad(product.image[0])}
-                    />
-                  )}
-                  <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 bg-accent text-white text-sm font-medium rounded-full">
-                      New
-                    </span>
+              <Link key={product._id} href={`/collection/${product._id}`}>
+                <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
+                  <div className="relative overflow-hidden h-70">
+                    {product.image && product.image.length > 0 && (
+                      <Image
+                        src={product.image[0]}
+                        alt={product.name}
+                        width={400}
+                        height={320}
+                        unoptimized={true}
+                        className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-500"
+                        onError={() => handleImageError(product.image[0])}
+                        onLoad={() => handleImageLoad(product.image[0])}
+                      />
+                    )}
+                    <div className="absolute top-4 left-4">
+                      <span className="px-3 py-1 bg-accent text-white text-sm font-medium rounded-full">
+                        New
+                      </span>
+                    </div>
                   </div>
-                </div>
 
-                <div className="p-6">
-                  <h3 className="text-md md:text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
-                    {product.name}
-                  </h3>
-                  <p className="text-xs md:text-sm text-gray-500 mb-3 capitalize">
-                    {product.category} • {product.subCategory}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-2xl font-bold text-gray-900">
-                      ${product.price}
-                    </span>
+                  <div className="p-6">
+                    <h3 className="text-md md:text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
+                      {product.name}
+                    </h3>
+                    <p className="text-xs md:text-sm text-gray-500 mb-3 capitalize">
+                      {product.category} • {product.subCategory}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-2xl font-bold text-gray-900">
+                        ${product.price}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
 
@@ -205,7 +181,7 @@ const Home = () => {
               href="/collection"
               className="inline-flex items-center px-8 py-4 bg-gradient-hero text-white font-semibold rounded-full transition-all duration-300 transform hover:scale-105 shadow-lg"
             >
-              Explore Latest Collection
+              Shop Collection
               <svg
                 className="ml-2 w-5 h-5"
                 fill="none"
