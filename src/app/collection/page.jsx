@@ -251,14 +251,13 @@ const Collection = () => {
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                           width={400}
                           height={320}
-                          unoptimized={true}
                           onError={() => handleImageError(product.image[0])}
                           onLoad={() => handleImageLoad(product.image[0])}
                         />
                       )}
                     </div>
 
-                    <div className="p-6">
+                    <div className="p-6 md:min-h-[200px]">
                       <h3 className="text-md md:text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
                         {product.name}
                       </h3>

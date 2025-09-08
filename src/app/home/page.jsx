@@ -89,7 +89,6 @@ const Home = () => {
                         alt={product.name}
                         width={400}
                         height={320}
-                        unoptimized={true}
                         className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-500"
                         onError={() => handleImageError(product.image[0])}
                         onLoad={() => handleImageLoad(product.image[0])}
@@ -102,7 +101,7 @@ const Home = () => {
                     </div>
                   </div>
 
-                  <div className="p-6">
+                  <div className="p-6 md:min-h-[200px]">
                     <h3 className="text-md md:text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
                       {product.name}
                     </h3>
@@ -145,7 +144,6 @@ const Home = () => {
                         alt={product.name}
                         width={400}
                         height={320}
-                        unoptimized={true}
                         className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-500"
                         onError={() => handleImageError(product.image[0])}
                         onLoad={() => handleImageLoad(product.image[0])}
@@ -158,7 +156,7 @@ const Home = () => {
                     </div>
                   </div>
 
-                  <div className="p-6">
+                  <div className="p-6 md:min-h-[200px]">
                     <h3 className="text-md md:text-lg font-semibold text-gray-900 mb-2 line-clamp-2">
                       {product.name}
                     </h3>

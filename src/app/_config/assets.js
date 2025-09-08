@@ -603,19 +603,6 @@ export const products = [
     bestseller: false,
   },
   {
-    _id: "aaabq",
-    name: "Kid Tapered Slim Fit Trouser",
-    description:
-      "A lightweight, usually knitted, pullover shirt, close-fitting and with a round neckline and short sleeves, worn as an undershirt or outer garment.",
-    price: 280,
-    image: [p_img43],
-    category: "Kids",
-    subCategory: "Bottomwear",
-    sizes: ["S", "M", "L", "XL"],
-    date: 1716658545448,
-    bestseller: false,
-  },
-  {
     _id: "aaabr",
     name: "Women Zip-Front Relaxed Fit Jacket",
     description:
@@ -678,32 +665,6 @@ export const products = [
     subCategory: "Winterwear",
     sizes: ["S", "M", "L", "XL"],
     date: 1716664045448,
-    bestseller: false,
-  },
-  {
-    _id: "aaabw",
-    name: "Kid Tapered Slim Fit Trouser",
-    description:
-      "A lightweight, usually knitted, pullover shirt, close-fitting and with a round neckline and short sleeves, worn as an undershirt or outer garment.",
-    price: 310,
-    image: [p_img49],
-    category: "Kids",
-    subCategory: "Bottomwear",
-    sizes: ["S", "M", "L", "XL"],
-    date: 1716665145448,
-    bestseller: false,
-  },
-  {
-    _id: "aaabx",
-    name: "Kid Tapered Slim Fit Trouser",
-    description:
-      "A lightweight, usually knitted, pullover shirt, close-fitting and with a round neckline and short sleeves, worn as an undershirt or outer garment.",
-    price: 340,
-    image: [p_img50],
-    category: "Kids",
-    subCategory: "Bottomwear",
-    sizes: ["S", "M", "L", "XL"],
-    date: 1716666245448,
     bestseller: false,
   },
   {
