@@ -1,18 +1,43 @@
 "use client";
-import { createContext, useContext, useState } from "react";
-
-export const ShopContext = createContext();
+import { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { products } from "../_config/assets";
 import { toast } from "sonner";
 
+export const ShopContext = createContext();
+
 export const ShopProvider = ({ children }) => {
+  console.log("ShopProvider re-rendered");
   const [imageErrors, setImageErrors] = useState({});
   const [imageLoads, setImageLoads] = useState({});
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState([]);
-  const [cartCount, setCartCount] = useState(0);
   const currency = "$";
+
+  // Load cart from localStorage on mount
+  useEffect(() => {
+    const storedCart = localStorage.getItem("cartItems");
+    if (storedCart) setCartItems(JSON.parse(storedCart));
+    console.log("get");
+  }, []);
+
+  // Save cart to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    console.log("saved");
+  }, [cartItems]);
+
+  // Sync cart across tabs
+  useEffect(() => {
+    const handleStorageChange = (event) => {
+      if (event.key === "cartItems") {
+        const updatedCart = event.newValue ? JSON.parse(event.newValue) : [];
+        setCartItems(updatedCart);
+      }
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
 
   const addToCart = (productId, size, quantity = 1) => {
     const product = products.find((p) => p._id === productId);
@@ -26,7 +51,6 @@ export const ShopProvider = ({ children }) => {
       );
 
       if (existing) {
-        // If item already in cart → increase only by quantity
         isNewItem = false;
         return prev.map((item) =>
           item._id === productId && item.size === size
@@ -34,13 +58,12 @@ export const ShopProvider = ({ children }) => {
             : item
         );
       } else {
-        // If new → add with quantity = passed value
         return [
           ...prev,
           {
             _id: product._id,
             name: product.name,
-            image: product.image[0], // ✅ store first image
+            image: product.image[0],
             size,
             price: product.price,
             quantity,
@@ -48,6 +71,7 @@ export const ShopProvider = ({ children }) => {
         ];
       }
     });
+
     toast.success(
       isNewItem
         ? `${product.name} ${size} added to cart!`
@@ -56,34 +80,28 @@ export const ShopProvider = ({ children }) => {
     );
   };
 
-  // total cart count
-  const getCartCount = () => {
-    return cartItems.reduce((total, item) => total + item.quantity, 0);
-  };
+  const getCartCount = () =>
+    cartItems.reduce((total, item) => total + item.quantity, 0);
 
-  // ✅ Calculate totals
   const getCartTotal = () =>
     cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
-  // ✅ Remove from cart
   const removeFromCart = (productId, size) => {
     setCartItems((prev) =>
       prev.filter((item) => !(item._id === productId && item.size === size))
     );
   };
 
-  // ✅ Decrease quantity (instead of full remove)
   const decreaseQuantity = (productId, size) => {
-    setCartItems((prev) => {
-      return prev
-        .map((item) => {
-          if (item._id === productId && item.size === size) {
-            return { ...item, quantity: item.quantity - 1 };
-          }
-          return item;
-        })
-        .filter((item) => item.quantity > 0); // remove if qty = 0
-    });
+    setCartItems((prev) =>
+      prev
+        .map((item) =>
+          item._id === productId && item.size === size
+            ? { ...item, quantity: item.quantity - 1 }
+            : item
+        )
+        .filter((item) => item.quantity > 0)
+    );
   };
 
   const handleImageError = (imagePath) => {
@@ -96,32 +114,31 @@ export const ShopProvider = ({ children }) => {
     setImageLoads((prev) => ({ ...prev, [imagePath]: true }));
   };
 
+  const contextValue = useMemo(
+    () => ({
+      imageErrors,
+      imageLoads,
+      handleImageError,
+      handleImageLoad,
+      search,
+      setSearch,
+      showSearch,
+      setShowSearch,
+      products,
+      currency,
+      addToCart,
+      removeFromCart,
+      getCartTotal,
+      cartItems,
+      decreaseQuantity,
+      getCartCount,
+    }),
+    [imageErrors, imageLoads, search, showSearch, cartItems]
+  );
+
   return (
-    <ShopContext.Provider
-      value={{
-        imageErrors,
-        imageLoads,
-        handleImageError,
-        handleImageLoad,
-        search,
-        setSearch,
-        showSearch,
-        setShowSearch,
-        products,
-        currency,
-        addToCart,
-        removeFromCart,
-        getCartTotal,
-        cartItems,
-        decreaseQuantity,
-        getCartCount,
-      }}
-    >
-      {children}
-    </ShopContext.Provider>
+    <ShopContext.Provider value={contextValue}>{children}</ShopContext.Provider>
   );
 };
 
-export const useShopContext = () => {
-  return useContext(ShopContext);
-};
+export const useShopContext = () => useContext(ShopContext);

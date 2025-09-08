@@ -17,6 +17,7 @@ const Navbar = () => {
   const pathname = usePathname();
   const profileRef = useRef(null);
   const searchRef = useRef(null);
+  const cartCount = getCartCount();
 
   const navItems = [
     { path: "/", label: "HOME", icon: "🏠" },
@@ -32,7 +33,6 @@ const Navbar = () => {
     { label: "Logout", icon: "🚪", action: "logout" },
   ];
 
-  console.log(getCartCount());
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
@@ -215,13 +215,17 @@ const Navbar = () => {
 
             {/* Cart */}
             <Link href={"/cart"}>
-              <button className="relative p-3 rounded-xl bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-300 hover:shadow-lg hover:scale-105 group">
+              <button className="relative p-3 rounded-xl bg-white/80 backdrop-blur-sm cursor-pointer hover:bg-white transition-all duration-300 hover:shadow-lg hover:scale-105 group">
                 <ShoppingCart
                   size={20}
                   className="text-gray-600 group-hover:text-gray-800 transition-colors"
                 />
-                <span className="absolute -top-2 -right-2 w-6 h-6 text-xs font-bold flex items-center justify-center text-white bg-gray-600 rounded-full shadow-lg animate-pulse">
-                  {getCartCount()}
+                <span
+                  className={`absolute -top-2 -right-2 w-6 h-6 text-xs font-bold flex items-center justify-center text-white ${
+                    cartCount > 0 ? "bg-accent" : "bg-gray-600"
+                  } rounded-full shadow-lg animate-pulse`}
+                >
+                  {cartCount}
                 </span>
               </button>
             </Link>

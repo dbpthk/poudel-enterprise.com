@@ -1,10 +1,10 @@
 "use client";
-import React, { use } from "react";
+import React from "react";
 import { products } from "../_config/assets";
 import Link from "next/link";
 import Image from "next/image";
 import { useShopContext } from "../_context/ShopContext";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 
 const Collection = () => {
   const { handleImageError, handleImageLoad, search, showSearch } =
@@ -25,10 +25,6 @@ const Collection = () => {
         : [...prev, value]
     );
   };
-  useEffect(() => {
-    console.log("Updated category:", category);
-    console.log("Updated subcategory:", subCategory);
-  }, [category, subCategory]);
 
   const toggleSubCategory = (e) => {
     const value = e.target.value;

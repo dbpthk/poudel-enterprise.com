@@ -15,10 +15,6 @@ const Product = () => {
   const [size, setSize] = useState("");
 
   useEffect(() => {
-    console.log(id);
-  });
-
-  useEffect(() => {
     if (!products || !id) return;
 
     // normalize to array
