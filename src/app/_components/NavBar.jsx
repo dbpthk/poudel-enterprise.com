@@ -266,7 +266,7 @@ const Navbar = () => {
             </button>
           </div>
 
-          <nav className="p-6 space-y-2 bg-white">
+          <nav className="p-6 space-y-2 bg-white h-screen">
             {navItems.map((item) => {
               const isActive = pathname === item.path;
               return (
