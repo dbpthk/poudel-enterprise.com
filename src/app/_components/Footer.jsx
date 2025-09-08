@@ -1,5 +1,4 @@
 "use client";
-import { useState } from "react";
 import Image from "next/image";
 import { toast } from "sonner";
 import { contactInfo } from "../_config/contact";
@@ -46,30 +45,6 @@ const Footer = () => {
                   providing innovative solutions and outstanding customer
                   experiences.
                 </p>
-              </div>
-
-              {/* Social Links */}
-              <div className="flex items-center gap-4">
-                {[
-                  { icon: "📱", label: "Phone", action: copyPhone },
-                  { icon: "📧", label: "Email", action: copyEmail },
-                ].map((social, index) =>
-                  social.action ? (
-                    <button
-                      key={index}
-                      onClick={social.action}
-                      aria-label={social.label}
-                      className="group flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm rounded-xl hover:bg-white/20 transition-all duration-300 border border-white/20 hover:border-white/40 cursor-pointer"
-                    >
-                      <span className="text-lg group-hover:scale-110 transition-transform duration-300">
-                        {social.icon}
-                      </span>
-                      <span className="text-sm font-medium text-gray-300 group-hover:text-white">
-                        {social.label}
-                      </span>
-                    </button>
-                  ) : null
-                )}
               </div>
             </div>
 
@@ -130,6 +105,16 @@ const Footer = () => {
                   <div>
                     <p className="font-medium text-white">Phone</p>
                     <p className="text-gray-300 text-sm">{contactInfo.phone}</p>
+                  </div>
+                </div>
+                <div
+                  onClick={copyEmail}
+                  className="flex items-start gap-3 cursor-pointer hover:opacity-80"
+                >
+                  <span className="text-2xl">📧</span>
+                  <div>
+                    <p className="font-medium text-white">Email</p>
+                    <p className="text-gray-300 text-sm">{contactInfo.email}</p>
                   </div>
                 </div>
               </div>
