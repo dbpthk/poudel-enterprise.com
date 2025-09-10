@@ -13,14 +13,16 @@ export const ShopProvider = ({ children }) => {
   const [search, setSearch] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const currency = "$";
   const { user, isLoaded } = useUser();
 
   // Load cart from localStorage on mount
   useEffect(() => {
+    setIsLoading(true);
     const storedCart = localStorage.getItem("cartItems");
     if (storedCart) setCartItems(JSON.parse(storedCart));
-    console.log("get");
+    setIsLoading(false);
   }, []);
 
   // Save cart to localStorage whenever it changes
@@ -136,6 +138,7 @@ export const ShopProvider = ({ children }) => {
       getCartCount,
       user,
       isLoaded,
+      isLoading,
     }),
     [imageErrors, imageLoads, search, showSearch, cartItems]
   );

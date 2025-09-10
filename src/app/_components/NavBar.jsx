@@ -4,9 +4,9 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, User, ShoppingCart, Search, X, ChevronDown } from "lucide-react";
+import { Menu, User, ShoppingCart, Search, X } from "lucide-react";
 import { useShopContext } from "../_context/ShopContext";
-import { useUser, UserButton, SignOutButton } from "@clerk/nextjs";
+import { useUser, UserButton } from "@clerk/nextjs";
 
 const Navbar = () => {
   const { search, setSearch, getCartCount } = useShopContext();
@@ -113,7 +113,7 @@ const Navbar = () => {
                       {item.label}
                     </span>
                     <div
-                      className={`absolute bottom-3 left-1/2 transform -translate-x-1/2 h-1 w-4/5 bg-accent rounded-full transition-all duration-300 ${
+                      className={`absolute bottom-3 left-1/2 transform -translate-x-1/2 h-1 w-3/5 bg-accent rounded-full transition-all duration-300 ${
                         isActive
                           ? "opacity-100 scale-x-100"
                           : "opacity-0 scale-x-0 group-hover:opacity-100 group-hover:scale-x-100"
@@ -161,109 +161,95 @@ const Navbar = () => {
                 )}
               </div>
             )}
-
-            <div ref={profileRef} className="relative">
-              <button
-                onClick={() => setProfileOpen(!profileOpen)}
-                className="p-3 cursor-pointer rounded-xl bg-white/80 backdrop-blur-sm flex flex-row gap-2 hover:bg-white transition-all duration-300 hover:shadow-lg hover:scale-105 group"
-              >
-                <User
-                  size={20}
-                  className="text-gray-600 group-hover:text-gray-800 transition-colors"
-                />
-                <span className="font-medium">Account</span>
-              </button>
-              {profileOpen && isLoaded && (
-                <div className="absolute right-0  top-full mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-2 min-w-[220px] z-50 animate-in slide-in-from-top-2 duration-200">
-                  {user ? (
-                    <>
-                      <div className="px-1">
-                        <p className="px-4 py-2 text-gray-700 font-medium text-lg">
-                          {user.firstName || user.username}
-                        </p>
-                      </div>
-                      <Link
-                        href="/orders"
-                        onClick={() => setDropdownOpen(false)}
-                      >
-                        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-100  transition-all duration-200 text-left group cursor-pointer">
-                          <span className="text-lg group-hover:scale-110 transition-transform duration-200">
-                            📦
-                          </span>
-                          <span className="font-medium text-gray-700 group-hover:text-gray-900 transition-colors duration-200">
-                            Orders
-                          </span>
-                        </button>
-                      </Link>
-                      <SignOutButton onClick={() => setProfileOpen(false)}>
-                        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-100 transition-all duration-200 text-left group cursor-pointer">
-                          <span className="text-lg group-hover:scale-110 transition-transform duration-200">
-                            👤
-                          </span>
-                          <span className="font-medium text-gray-700 group-hover:text-gray-900 transition-colors duration-200">
-                            Sign Out
-                          </span>
-                        </button>
-                      </SignOutButton>
-                    </>
+            <div className="flex flex-row gap-5 min-h-[56px]">
+              <div ref={profileRef} className="relative">
+                <button
+                  onClick={() => setProfileOpen(!profileOpen)}
+                  className={`hidden lg:inline p-2 cursor-pointer rounded-xl ${
+                    !user && "bg-white/80 backdrop-blur-sm "
+                  }hover:bg-white transition-all duration-300 hover:shadow-lg hover:scale-105 group flex flex-row gap-2 `}
+                >
+                  {!isLoaded ? (
+                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-gray-400" />
+                  ) : user ? (
+                    <div className="flex flex-row items-center gap-2 text-sm font-medium ">
+                      Account
+                      <UserButton>
+                        <UserButton.MenuItems>
+                          <UserButton.Link
+                            label="View Orders"
+                            labelIcon="📦"
+                            href="/orders"
+                          />
+                        </UserButton.MenuItems>
+                      </UserButton>
+                    </div>
                   ) : (
-                    <>
-                      <Link
-                        href={"/sign-up"}
-                        onClick={() => setProfileOpen(false)}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-100 transition-all duration-200 text-left group "
-                      >
-                        <span className="text-lg group-hover:scale-110 transition-transform duration-200">
-                          👤
-                        </span>
-                        <span className="font-medium text-gray-700 group-hover:text-gray-900 transition-colors duration-200">
-                          Sign Up
-                        </span>
-                      </Link>
+                    <div className="text-sm font-medium flex flex-row gap-2">
+                      <User
+                        size={20}
+                        className="text-gray-600 group-hover:text-gray-800 transition-colors "
+                      />
+                      Sign in/ Join
+                    </div>
+                  )}
+                </button>
+
+                {profileOpen && isLoaded && !user && (
+                  <div className="absolute right-0  top-full mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-2 min-w-[220px] z-50 animate-in slide-in-from-top-2 duration-200">
+                    <div className="flex flex-col sm:flex-row items-center text-sm font-medium">
                       <Link
                         href={"/sign-in"}
                         onClick={() => setProfileOpen(false)}
-                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-100 transition-all duration-200 text-left group "
+                        className="w-full flex items-center gap-3 p-2 rounded-xl hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-100 transition-all duration-200 text-left group "
                       >
-                        <span className="text-lg group-hover:scale-110 transition-transform duration-200">
-                          👤
-                        </span>
+                        <span className="text-md">👤</span>
                         <span className="font-medium text-gray-700 group-hover:text-gray-900 transition-colors duration-200">
                           Sign In
                         </span>
                       </Link>
-                    </>
-                  )}
-                </div>
-              )}
-            </div>
+                      <p>|</p>
+                      <Link
+                        href={"/sign-up"}
+                        onClick={() => setProfileOpen(false)}
+                        className="w-full p-2 rounded-xl hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-100 transition-all duration-200 text-left group "
+                      >
+                        <span className="font-medium text-gray-700 group-hover:text-gray-900 transition-colors duration-200">
+                          Join
+                        </span>
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
 
-            {/* Cart */}
-            <Link href={"/cart"}>
-              <button className="relative p-3 rounded-xl bg-white/80 backdrop-blur-sm cursor-pointer hover:bg-white transition-all duration-300 hover:shadow-lg hover:scale-105 group">
-                <ShoppingCart
-                  size={20}
-                  className="text-gray-600 group-hover:text-gray-800 transition-colors"
-                />
-                <span
-                  className={`absolute -top-2 -right-2 w-6 h-6 text-xs font-bold flex items-center justify-center text-white ${
-                    cartCount > 0 &&
-                    "bg-accent rounded-full shadow-lg animate-pulse"
-                  }
+              {/* Cart */}
+              <Link href={"/cart"}>
+                <button className="relative p-3 rounded-xl bg-white/80 backdrop-blur-sm cursor-pointer hover:bg-white transition-all duration-300 hover:shadow-lg hover:scale-105 group">
+                  <ShoppingCart
+                    size={20}
+                    className="text-gray-600 group-hover:text-gray-800 transition-colors"
+                  />
+                  <span
+                    className={`absolute -top-2 -right-2 w-6 h-6 text-xs font-bold flex items-center justify-center text-white ${
+                      cartCount > 0 &&
+                      "bg-accent rounded-full shadow-lg animate-pulse"
+                    }
                   `}
-                >
-                  {cartCount > 0 && cartCount}
-                </span>
-              </button>
-            </Link>
+                  >
+                    {cartCount > 0 && cartCount}
+                  </span>
+                </button>
+              </Link>
 
-            {/* Mobile Menu */}
-            <button
-              onClick={() => setMobileOpen(true)}
-              className="lg:hidden p-3 rounded-xl bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-300 hover:shadow-lg hover:scale-105"
-            >
-              <Menu size={20} className="text-gray-600" />
-            </button>
+              {/* Mobile Menu */}
+              <button
+                onClick={() => setMobileOpen(true)}
+                className="lg:hidden p-3 rounded-xl bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-300 hover:shadow-lg hover:scale-105 group"
+              >
+                <Menu size={25} className="text-gray-600 cursor-pointer" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -289,11 +275,11 @@ const Navbar = () => {
               onClick={() => setMobileOpen(false)}
               className="p-2 rounded-xl hover:bg-gray-100 transition-colors hover:scale-110"
             >
-              <X className="w-6 h-6 text-gray-600" />
+              <X className="w-6 h-6 text-gray-600 cursor-pointer" />
             </button>
           </div>
 
-          <nav className="p-6 space-y-2 bg-white h-screen">
+          <nav className="p-6 space-y-2 bg-white">
             {navItems.map((item) => {
               const isActive = pathname === item.path;
               return (
@@ -324,26 +310,51 @@ const Navbar = () => {
             })}
           </nav>
 
-          {/* Mobile Profile Section */}
-          {/* <div className="p-6 border-t bg-white border-gray-200">
-            <div className="space-y-2">
-              {profileMenuItems.map((item, index) => (
-                <button
-                  key={index}
-                  onClick={() => {
-                    handleProfileAction(item);
-                    setMobileOpen(false);
-                  }}
-                  className="w-full flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all duration-200 text-left"
+          <div className=" bg-white border-t-1 border-gray-300 h-screen">
+            {isLoaded && user ? (
+              <div className="flex flex-col font-medium text-lg gap-4 mb-2 px-6 py-6 rounded-xl transition-all duration-200 w-full ">
+                <Link
+                  href="/orders"
+                  className={`flex gap-4 px-4 py-4 rounded-xl not-only:transition-all duration-200 ${
+                    pathname === "/orders"
+                      ? "bg-gray-100 shadow-md"
+                      : "hover:bg-gray-100"
+                  }`}
+                  onClick={() => setMobileOpen(false)}
                 >
-                  <span className="text-lg">{item.icon}</span>
-                  <span className="font-medium text-gray-700">
-                    {item.label}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </div> */}
+                  <span className="text-xl">📦</span>
+                  <span className="text-lg font-medium">View Orders</span>
+                </Link>
+
+                <div className="flex gap-4 px-4 py-4">
+                  Account <UserButton />
+                </div>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-3 p-6">
+                <Link
+                  className={`flex gap-4 px-4 py-4 transition-all duration-200 ${
+                    pathname === "/sign-in" ? "bg-gray-100 shadow-md" : ""
+                  }`}
+                  href={"/sign-in"}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <span className="text-lg font-medium">👤</span>
+                  <span className="text-lg font-medium">Sign In</span>
+                </Link>
+                <Link
+                  className={`flex gap-4 px-4 py-4 transition-all duration-200 ${
+                    pathname === "/sign-up" ? "bg-gray-100 shadow-md" : ""
+                  }`}
+                  href={"/sign-up"}
+                  onClick={() => setMobileOpen(false)}
+                >
+                  <span className="text-lg font-medium">👤</span>
+                  <span className="text-lg font-medium">Join</span>
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </header>
