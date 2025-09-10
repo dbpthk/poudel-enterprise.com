@@ -2,6 +2,7 @@
 import { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { products } from "../_config/assets";
 import { toast } from "sonner";
+import { useUser } from "@clerk/nextjs";
 
 export const ShopContext = createContext();
 
@@ -13,6 +14,7 @@ export const ShopProvider = ({ children }) => {
   const [showSearch, setShowSearch] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const currency = "$";
+  const { user, isLoaded } = useUser();
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -132,6 +134,8 @@ export const ShopProvider = ({ children }) => {
       cartItems,
       decreaseQuantity,
       getCartCount,
+      user,
+      isLoaded,
     }),
     [imageErrors, imageLoads, search, showSearch, cartItems]
   );

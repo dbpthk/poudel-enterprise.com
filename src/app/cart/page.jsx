@@ -10,6 +10,8 @@ const CartSummary = () => {
     removeFromCart,
     addToCart,
     currency,
+    user,
+    isLoaded,
   } = useShopContext();
 
   return (
@@ -105,7 +107,7 @@ const CartSummary = () => {
             </span>
           </div>
           <button className="mt-6 w-full bg-gradient-hero text-white py-3 rounded-lg font-medium hover:bg-gradient-footer cursor-pointer active:scale-95 transition-all duration-300">
-            Proceed to Checkout
+            Sign In to Checkout
           </button>
         </div>
       )}

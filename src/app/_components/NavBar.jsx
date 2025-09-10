@@ -6,6 +6,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, User, ShoppingCart, Search, X, ChevronDown } from "lucide-react";
 import { useShopContext } from "../_context/ShopContext";
+import { useUser, UserButton, SignOutButton } from "@clerk/nextjs";
 
 const Navbar = () => {
   const { search, setSearch, getCartCount } = useShopContext();
@@ -18,19 +19,13 @@ const Navbar = () => {
   const profileRef = useRef(null);
   const searchRef = useRef(null);
   const cartCount = getCartCount();
+  const { user, isLoaded } = useUser();
 
   const navItems = [
     { path: "/", label: "HOME", icon: "🏠" },
     { path: "/collection", label: "COLLECTION", icon: "🛍️" },
     { path: "/about", label: "ABOUT", icon: "ℹ️" },
     { path: "/contact", label: "CONTACT", icon: "📞" },
-  ];
-
-  const profileMenuItems = [
-    { label: "My Profile", icon: "👤", path: "/profile" },
-    { label: "Orders", icon: "📦", path: "/orders" },
-    { label: "Settings", icon: "⚙️", path: "/settings" },
-    { label: "Logout", icon: "🚪", action: "logout" },
   ];
 
   useEffect(() => {
@@ -61,18 +56,6 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const handleProfileAction = (item) => {
-    if (item.action === "logout") {
-      // Handle logout logic here
-      console.log("Logging out...");
-      setProfileOpen(false);
-    } else if (item.path) {
-      // Navigate to path
-      window.location.href = item.path;
-      setProfileOpen(false);
-    }
-  };
-
   return (
     <header
       className={`sticky top-0 z-50 transition-all duration-500 ${
@@ -80,6 +63,7 @@ const Navbar = () => {
       }`}
     >
       {/* Top Banner */}
+
       <div className="hidden sm:flex w-full h-[30px] bg-gray-800 justify-center items-center gap-4 text-sm text-white font-medium">
         <p className="flex items-center gap-1">
           <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
@@ -178,40 +162,81 @@ const Navbar = () => {
               </div>
             )}
 
-            {/* Profile */}
-            {/* <div ref={profileRef} className="relative">
+            <div ref={profileRef} className="relative">
               <button
                 onClick={() => setProfileOpen(!profileOpen)}
-                className="p-3 rounded-xl bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-300 hover:shadow-lg hover:scale-105 group"
+                className="p-3 cursor-pointer rounded-xl bg-white/80 backdrop-blur-sm flex flex-row gap-2 hover:bg-white transition-all duration-300 hover:shadow-lg hover:scale-105 group"
               >
                 <User
                   size={20}
                   className="text-gray-600 group-hover:text-gray-800 transition-colors"
                 />
+                <span className="font-medium">Account</span>
               </button>
-              {profileOpen && (
-                <div className="absolute right-0 top-full mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-2 min-w-[220px] z-50 animate-in slide-in-from-top-2 duration-200">
-                  {profileMenuItems.map((item, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleProfileAction(item)}
-                      className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-purple-50 hover:to-pink-50 transition-all duration-200 text-left group"
-                    >
-                      <span className="text-lg group-hover:scale-110 transition-transform duration-200">
-                        {item.icon}
-                      </span>
-                      <span className="font-medium text-gray-700 group-hover:text-gray-900 transition-colors duration-200">
-                        {item.label}
-                      </span>
-                      <ChevronDown
-                        size={16}
-                        className="ml-auto text-gray-400 group-hover:text-gray-600 transition-colors duration-200"
-                      />
-                    </button>
-                  ))}
+              {profileOpen && isLoaded && (
+                <div className="absolute right-0  top-full mt-2 bg-white/95 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/20 p-2 min-w-[220px] z-50 animate-in slide-in-from-top-2 duration-200">
+                  {user ? (
+                    <>
+                      <div className="px-1">
+                        <p className="px-4 py-2 text-gray-700 font-medium text-lg">
+                          {user.firstName || user.username}
+                        </p>
+                      </div>
+                      <Link
+                        href="/orders"
+                        onClick={() => setDropdownOpen(false)}
+                      >
+                        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-100  transition-all duration-200 text-left group cursor-pointer">
+                          <span className="text-lg group-hover:scale-110 transition-transform duration-200">
+                            📦
+                          </span>
+                          <span className="font-medium text-gray-700 group-hover:text-gray-900 transition-colors duration-200">
+                            Orders
+                          </span>
+                        </button>
+                      </Link>
+                      <SignOutButton onClick={() => setProfileOpen(false)}>
+                        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-100 transition-all duration-200 text-left group cursor-pointer">
+                          <span className="text-lg group-hover:scale-110 transition-transform duration-200">
+                            👤
+                          </span>
+                          <span className="font-medium text-gray-700 group-hover:text-gray-900 transition-colors duration-200">
+                            Sign Out
+                          </span>
+                        </button>
+                      </SignOutButton>
+                    </>
+                  ) : (
+                    <>
+                      <Link
+                        href={"/sign-up"}
+                        onClick={() => setProfileOpen(false)}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-100 transition-all duration-200 text-left group "
+                      >
+                        <span className="text-lg group-hover:scale-110 transition-transform duration-200">
+                          👤
+                        </span>
+                        <span className="font-medium text-gray-700 group-hover:text-gray-900 transition-colors duration-200">
+                          Sign Up
+                        </span>
+                      </Link>
+                      <Link
+                        href={"/sign-in"}
+                        onClick={() => setProfileOpen(false)}
+                        className="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gradient-to-r hover:from-amber-50 hover:to-amber-100 transition-all duration-200 text-left group "
+                      >
+                        <span className="text-lg group-hover:scale-110 transition-transform duration-200">
+                          👤
+                        </span>
+                        <span className="font-medium text-gray-700 group-hover:text-gray-900 transition-colors duration-200">
+                          Sign In
+                        </span>
+                      </Link>
+                    </>
+                  )}
                 </div>
               )}
-            </div> */}
+            </div>
 
             {/* Cart */}
             <Link href={"/cart"}>
@@ -222,10 +247,12 @@ const Navbar = () => {
                 />
                 <span
                   className={`absolute -top-2 -right-2 w-6 h-6 text-xs font-bold flex items-center justify-center text-white ${
-                    cartCount > 0 ? "bg-accent" : "bg-gray-600"
-                  } rounded-full shadow-lg animate-pulse`}
+                    cartCount > 0 &&
+                    "bg-accent rounded-full shadow-lg animate-pulse"
+                  }
+                  `}
                 >
-                  {cartCount}
+                  {cartCount > 0 && cartCount}
                 </span>
               </button>
             </Link>
