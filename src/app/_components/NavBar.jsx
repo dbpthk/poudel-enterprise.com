@@ -166,13 +166,15 @@ const Navbar = () => {
                 <button
                   onClick={() => setProfileOpen(!profileOpen)}
                   className={`hidden lg:inline p-2 cursor-pointer rounded-xl ${
-                    !user && "bg-white/80 backdrop-blur-sm "
-                  }hover:bg-white transition-all duration-300 hover:shadow-lg hover:scale-105 group flex flex-row gap-2 `}
+                    !user ? "bg-white/80 backdrop-blur-sm " : ""
+                  } hover:bg-white transition-all duration-300 hover:shadow-lg hover:scale-105 group flex flex-row gap-2`}
                 >
                   {!isLoaded ? (
+                    // LOADING STATE
                     <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-gray-400" />
                   ) : user ? (
-                    <div className="flex flex-row items-center gap-2 text-sm font-medium ">
+                    // LOGGED-IN STATE
+                    <div className="flex flex-row items-center gap-2 text-sm font-medium">
                       Account
                       <UserButton>
                         <UserButton.MenuItems>
@@ -181,16 +183,25 @@ const Navbar = () => {
                             labelIcon="📦"
                             href="/orders"
                           />
+                          {/* ADMIN LINK ONLY FOR ADMINS */}
+                          {user?.publicMetadata?.role === "admin" && (
+                            <UserButton.Link
+                              label="Admin"
+                              labelIcon="🛠️"
+                              href="/admin"
+                            />
+                          )}
                         </UserButton.MenuItems>
                       </UserButton>
                     </div>
                   ) : (
+                    // GUEST STATE
                     <div className="text-sm font-medium flex flex-row gap-2">
                       <User
                         size={20}
-                        className="text-gray-600 group-hover:text-gray-800 transition-colors "
+                        className="text-gray-600 group-hover:text-gray-800 transition-colors"
                       />
-                      Sign in/ Join
+                      Sign in / Join
                     </div>
                   )}
                 </button>

@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { products } from "../_config/assets";
 import { toast } from "sonner";
 import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 
 export const ShopContext = createContext();
 
@@ -16,6 +17,7 @@ export const ShopProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const currency = "$";
   const { user, isLoaded } = useUser();
+  const router = useRouter();
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -139,6 +141,7 @@ export const ShopProvider = ({ children }) => {
       user,
       isLoaded,
       isLoading,
+      router,
     }),
     [imageErrors, imageLoads, search, showSearch, cartItems]
   );

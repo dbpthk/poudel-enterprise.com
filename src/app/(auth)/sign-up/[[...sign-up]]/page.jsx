@@ -11,6 +11,8 @@ export default function SignUpPage() {
                 "bg-orange-600 hover:bg-orange-700 text-white font-semibold px-4 py-2 rounded-lg",
             },
           }}
+          afterSignUpUrl="/"
+          redirectUrl="/"
         />
       </div>
     </div>
