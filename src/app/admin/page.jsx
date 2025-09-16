@@ -211,7 +211,7 @@ export default function AdminPage() {
 
             <button
               type="submit"
-              className="bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
+              className="bg-blue-600 cursor-pointer text-white py-2 rounded hover:bg-blue-700"
             >
               {editingId ? "Update Product" : "Add Product"}
             </button>
