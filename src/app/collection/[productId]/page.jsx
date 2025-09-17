@@ -7,7 +7,7 @@ import { useShopContext } from "../../_context/ShopContext";
 import RelatedProducts from "../../_components/RelatedProducts";
 
 const Product = () => {
-  const { id } = useParams();
+  const { productId } = useParams();
   const { products, currency, addToCart } = useShopContext();
 
   const [productData, setProductData] = useState(null);
@@ -15,19 +15,20 @@ const Product = () => {
   const [size, setSize] = useState("");
 
   useEffect(() => {
-    if (!products || !id) return;
+    if (!products || !productId) return;
 
     // normalize to array
     const productArray = Array.isArray(products)
       ? products
       : Object.values(products);
-
-    const foundProduct = productArray.find((item) => item._id === id);
+    const id = Number(productId);
+    const foundProduct = productArray.find((item) => item.id === id);
     if (foundProduct) {
       setProductData(foundProduct);
-      setImage(foundProduct.image[0]); // first image
+      setImage(foundProduct.images[0]); // first image
     }
-  }, [products, id]);
+  }, [products, productId]);
+  console.log(productData);
 
   if (!productData) {
     return (
@@ -52,11 +53,11 @@ const Product = () => {
             priority
           />
           <div className="flex gap-3 overflow-x-auto ">
-            {productData.image.map((img, i) => (
+            {productData.images.map((img, index) => (
               <Image
-                key={i}
+                key={index}
                 src={img}
-                alt={productData.name}
+                alt={productData.name + " " + (index + 1)}
                 width={100}
                 height={100}
                 onClick={() => setImage(img)}
@@ -100,7 +101,7 @@ const Product = () => {
           </div>
 
           <button
-            onClick={() => addToCart(productData._id, size)}
+            onClick={() => addToCart(productData.id, size)}
             disabled={!size}
             className={`px-6 py-3 rounded-lg font-medium  ${
               size

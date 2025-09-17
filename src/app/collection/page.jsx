@@ -1,13 +1,13 @@
 "use client";
 import React from "react";
-import { products } from "../_config/assets";
+// import { products } from "../_config/assets backup";
 import Link from "next/link";
 import Image from "next/image";
 import { useShopContext } from "../_context/ShopContext";
 import { useState, useMemo } from "react";
 
 const Collection = () => {
-  const { handleImageError, handleImageLoad, search, showSearch } =
+  const { handleImageError, handleImageLoad, search, showSearch, products } =
     useShopContext();
 
   const allProducts = Object.values(products); //master copy
@@ -164,7 +164,7 @@ const Collection = () => {
                     ))}
                   </div>
                 </div>
-                {/* <div className="bg-gray-500 w-full h-[2px] md:hidden rounded-xl"></div> */}
+
                 {/* SubCategory Filter */}
                 <div className="space-y-4 md:border md:border-gray-200 p-2 rounded-xl">
                   <div className="flex items-center justify-center gap-2">
@@ -241,12 +241,12 @@ const Collection = () => {
           >
             {filteredProducts.length > 0 ? (
               filteredProducts.map((product) => (
-                <Link key={product._id} href={`/collection/${product._id}`}>
+                <Link key={product.id} href={`/collection/${product.id}`}>
                   <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden ">
                     <div className="overflow-hidden h-60">
-                      {product.image && product.image.length > 0 && (
+                      {product.images && product.images.length > 0 && (
                         <Image
-                          src={product.image[0]}
+                          src={product.images[0]}
                           alt={product.name}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                           width={400}

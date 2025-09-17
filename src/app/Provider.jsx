@@ -2,10 +2,10 @@
 import { ShopProvider } from "./_context/ShopContext";
 import { ClerkProvider } from "@clerk/nextjs";
 
-const Provider = ({ children }) => {
+const Provider = ({ children, initialProducts }) => {
   return (
     <ClerkProvider>
-      <ShopProvider>{children}</ShopProvider>
+      <ShopProvider initialProducts={initialProducts}>{children}</ShopProvider>
     </ClerkProvider>
   );
 };

@@ -14,7 +14,7 @@ const ProductItem = ({ id, image, name, price }) => {
           <Image
             className="w-full h-30 sm:h-48 object-cover 
           transition-transform duration-300 ease-in-out group-hover:scale-105"
-            src={image[0]}
+            src={image}
             alt={name}
             height={100}
             width={100}

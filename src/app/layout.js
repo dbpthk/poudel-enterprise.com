@@ -8,6 +8,7 @@ import Provider from "./Provider";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import ourFileRouter from "./_config/uploadthing";
+import FetchProducts from "./_components/FetchProducts";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,11 +40,13 @@ export default function RootLayout({ children }) {
       >
         <Provider>
           <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
-          <NavBar />
-          {children}
-          <Toaster richColors position="top-right" />
-          <Footer />
-          <ScrollToTopButton />
+          <FetchProducts>
+            <NavBar />
+            {children}
+            <Toaster richColors position="top-right" />
+            <Footer />
+            <ScrollToTopButton />
+          </FetchProducts>
         </Provider>
       </body>
     </html>

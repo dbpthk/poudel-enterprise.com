@@ -47,7 +47,7 @@ const CartSummary = () => {
           <div className="flex flex-col gap-6">
             {cartItems.map((item) => (
               <div
-                key={item._id + item.size}
+                key={item.id + item.size}
                 className="flex items-center justify-between border border-gray-200 shadow-2xs p-4 rounded-lg"
               >
                 {/* Left Side: Image + Product Info */}
@@ -80,7 +80,7 @@ const CartSummary = () => {
                   {/* Increase/Decrease Section */}
                   <div className="flex items-center gap-3">
                     <button
-                      onClick={() => decreaseQuantity(item._id, item.size)}
+                      onClick={() => decreaseQuantity(item.id, item.size)}
                       disabled={item.quantity <= 1}
                       className={`w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center border rounded 
                     ${
@@ -95,7 +95,7 @@ const CartSummary = () => {
                       {item.quantity}
                     </span>
                     <button
-                      onClick={() => addToCart(item._id, item.size)}
+                      onClick={() => addToCart(item.id, item.size)}
                       className="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center border rounded hover:bg-gray-100 active:scale-95"
                     >
                       +
@@ -104,7 +104,7 @@ const CartSummary = () => {
 
                   {/* Remove Button */}
                   <button
-                    onClick={() => removeFromCart(item._id, item.size)}
+                    onClick={() => removeFromCart(item.id, item.size)}
                     className="px-3 text-xs sm:text-sm py-1 border rounded text-red-500 hover:bg-red-50"
                   >
                     Remove

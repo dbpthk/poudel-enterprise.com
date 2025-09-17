@@ -1,14 +1,15 @@
 "use client";
 
 import React from "react";
-import { products } from "../_config/assets";
+// import { products } from "../_config/assets backup";
 import Link from "next/link";
 import Image from "next/image";
 import { useContext } from "react";
 import { ShopContext } from "../_context/ShopContext";
 
 const Home = () => {
-  const { handleImageError, handleImageLoad } = useContext(ShopContext);
+  const { handleImageError, handleImageLoad, products } =
+    useContext(ShopContext);
 
   // Get best sellers (products with bestseller: true)
   const bestSellers = products
@@ -80,18 +81,18 @@ const Home = () => {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
             {bestSellers.map((product) => (
-              <Link key={product._id} href={`/collection/${product._id}`}>
+              <Link key={product.id} href={`/collection/${product.id}`}>
                 <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
                   <div className="relative overflow-hidden h-70">
-                    {product.image && product.image.length > 0 && (
+                    {product.images && product.images.length > 0 && (
                       <Image
-                        src={product.image[0]}
+                        src={product.images[0]}
                         alt={product.name}
                         width={400}
                         height={320}
                         className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-500"
-                        onError={() => handleImageError(product.image[0])}
-                        onLoad={() => handleImageLoad(product.image[0])}
+                        onError={() => handleImageError(product.images[0])}
+                        onLoad={() => handleImageLoad(product.images[0])}
                       />
                     )}
                     <div className="absolute top-4 right-4">
@@ -135,18 +136,18 @@ const Home = () => {
 
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-8">
             {latestCollection.map((product) => (
-              <Link key={product._id} href={`/collection/${product._id}`}>
+              <Link key={product.id} href={`/collection/${product.id}`}>
                 <div className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 overflow-hidden">
                   <div className="relative overflow-hidden h-70">
-                    {product.image && product.image.length > 0 && (
+                    {product.images && product.images.length > 0 && (
                       <Image
-                        src={product.image[0]}
+                        src={product.images[0]}
                         alt={product.name}
                         width={400}
                         height={320}
                         className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-500"
-                        onError={() => handleImageError(product.image[0])}
-                        onLoad={() => handleImageLoad(product.image[0])}
+                        onError={() => handleImageError(product.images[0])}
+                        onLoad={() => handleImageLoad(product.images[0])}
                       />
                     )}
                     <div className="absolute top-4 left-4">
