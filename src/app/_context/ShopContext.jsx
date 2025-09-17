@@ -113,6 +113,8 @@ export const ShopProvider = ({ children, initialProducts = [] }) => {
   const getCartCount = () =>
     cartItems.reduce((total, item) => total + item.quantity, 0);
 
+  const cartCount = useMemo(() => getCartCount(), [cartItems]);
+
   const getCartTotal = () =>
     cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
@@ -135,6 +137,7 @@ export const ShopProvider = ({ children, initialProducts = [] }) => {
       removeFromCart,
       decreaseQuantity,
       getCartCount,
+      cartCount,
       getCartTotal,
       currency,
 

@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useShopContext } from "../_context/ShopContext";
 import Image from "next/image";
 
@@ -52,13 +53,15 @@ const CartSummary = () => {
               >
                 {/* Left Side: Image + Product Info */}
                 <div className="flex flex-col md:flex-row items-center gap-4">
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    width={64}
-                    height={64}
-                    className="rounded object-cover"
-                  />
+                  <Link href={`/collection/${item.id}`}>
+                    <Image
+                      src={item.image}
+                      alt={item.name}
+                      width={64}
+                      height={64}
+                      className="rounded object-cover"
+                    />
+                  </Link>
                   <div>
                     <h2 className="text-xs sm:text-sm font-medium">
                       {item.name}

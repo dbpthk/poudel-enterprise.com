@@ -9,7 +9,7 @@ import { useShopContext } from "../_context/ShopContext";
 import { useUser, UserButton } from "@clerk/nextjs";
 
 const Navbar = () => {
-  const { search, setSearch, getCartCount } = useShopContext();
+  const { search, setSearch, cartCount } = useShopContext();
   const [inputValue, setInputValue] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -18,7 +18,6 @@ const Navbar = () => {
   const pathname = usePathname();
   const profileRef = useRef(null);
   const searchRef = useRef(null);
-  const cartCount = getCartCount();
   const { user, isLoaded } = useUser();
 
   const navItems = [
@@ -88,6 +87,7 @@ const Navbar = () => {
               alt="logo"
               width={70}
               height={70}
+              priority
               className="transition-all duration-300 group-hover:scale-110 group-hover:rotate-2"
             />
           </Link>
@@ -100,6 +100,7 @@ const Navbar = () => {
                 <Link
                   key={item.path}
                   href={item.path}
+                  prefetch={true}
                   className="group relative"
                 >
                   <div className="relative flex flex-col items-center min-h-[56px] px-6 py-3 rounded-xl transition-all duration-300">
@@ -235,7 +236,7 @@ const Navbar = () => {
               </div>
 
               {/* Cart */}
-              <Link href={"/cart"}>
+              <Link href={"/cart"} prefetch={true}>
                 <button className="relative p-3 rounded-xl bg-white/80 backdrop-blur-sm cursor-pointer hover:bg-white transition-all duration-300 hover:shadow-lg hover:scale-105 group">
                   <ShoppingCart
                     size={20}
@@ -297,6 +298,7 @@ const Navbar = () => {
                 <Link
                   key={item.path}
                   href={item.path}
+                  prefetch
                   onClick={() => setMobileOpen(false)}
                 >
                   <div

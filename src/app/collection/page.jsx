@@ -251,8 +251,9 @@ const Collection = () => {
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                           width={400}
                           height={320}
-                          onError={() => handleImageError(product.image[0])}
-                          onLoad={() => handleImageLoad(product.image[0])}
+                          loading="lazy" // 👈 forces lazy loading
+                          onError={() => handleImageError(product.images[0])}
+                          onLoad={() => handleImageLoad(product.images[0])}
                         />
                       )}
                     </div>
