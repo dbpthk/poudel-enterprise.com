@@ -3,13 +3,29 @@ import Link from "next/link";
 import { useShopContext } from "../_context/ShopContext";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { ShoppingBag } from "lucide-react";
 
 const Checkout = () => {
-  const { cartItems, getCartTotal, removeFromCart, currency, isLoading } =
-    useShopContext();
+  // form state
+  const [fname, setFname] = useState("");
+  const [lname, setLname] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [zip, setZip] = useState("");
+  const [country, setCountry] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const {
+    cartItems,
+    getCartTotal,
+    getCartCount,
+    removeFromCart,
+    currency,
+    isLoading,
+  } = useShopContext();
   const path = usePathname();
-  console.log("Current path:", path);
 
   if (isLoading) {
     return (
@@ -23,17 +39,6 @@ const Checkout = () => {
     { tab: "2. Your Details", link: "/checkout" },
     { tab: "3. Payment", link: "/payment" },
   ];
-
-  // form state
-  const [fname, setFname] = useState("");
-  const [lname, setLname] = useState("");
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [zip, setZip] = useState("");
-  const [country, setCountry] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
 
   // fill dummy data
   const handleFillData = (e) => {
@@ -100,6 +105,7 @@ const Checkout = () => {
                       className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-color-accent focus:border-color-accent"
                       required
                       value={fname}
+                      onChange={(e) => setFname(e.target.value)}
                     />
                   </div>
                   <div>
@@ -111,6 +117,7 @@ const Checkout = () => {
                       className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-color-accent focus:border-color-accent"
                       required
                       value={lname}
+                      onChange={(e) => setLname(e.target.value)}
                     />
                   </div>
                 </div>
@@ -123,6 +130,7 @@ const Checkout = () => {
                     className="mt 1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-color-accent focus:border-color-accent"
                     required
                     value={address}
+                    onChange={(e) => setAddress(e.target.value)}
                   />
                 </div>
                 <div className="flex flex-row gap-4">
@@ -135,6 +143,7 @@ const Checkout = () => {
                       className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-color-accent focus:border-color-accent"
                       required
                       value={city}
+                      onChange={(e) => setCity(e.target.value)}
                     />
                   </div>
                   <div>
@@ -146,6 +155,7 @@ const Checkout = () => {
                       className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-color-accent focus:border-color-accent"
                       required
                       value={state}
+                      onChange={(e) => setState(e.target.value)}
                     />
                   </div>
                 </div>
@@ -160,6 +170,7 @@ const Checkout = () => {
                       className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-color-accent focus:border-color-accent"
                       required
                       value={zip}
+                      onChange={(e) => setZip(e.target.value)}
                     />
                   </div>
 
@@ -172,6 +183,7 @@ const Checkout = () => {
                       className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-color-accent focus:border-color-accent"
                       required
                       value={country}
+                      onChange={(e) => setCountry(e.target.value)}
                     />
                   </div>
                 </div>
@@ -184,6 +196,7 @@ const Checkout = () => {
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-color-accent focus:border-color-accent"
                     required
                     value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
                   />
                 </div>
                 <div>
@@ -195,6 +208,7 @@ const Checkout = () => {
                     className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-color-accent focus:border-color-accent"
                     required
                     value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                   />
                 </div>
                 {/* dummy date  */}
@@ -225,7 +239,12 @@ const Checkout = () => {
 
             {/* Cart Items */}
             <div>
-              <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
+              <div className="flex flex-col justify-between lg:flex-row gap-6 mb-2">
+                <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
+                <div>
+                  <ShoppingBag /> <span> {getCartCount()} Items </span>
+                </div>
+              </div>
 
               <div className="flex flex-col border border-gray-300 rounded-xl p-5 min-w-[300px] gap-6">
                 {cartItems.map((item) => (
@@ -293,8 +312,10 @@ const Checkout = () => {
                       </div>
                     )}
                   </div>
+
                   <div className="flex justify-between text-xl font-semibold mt-4 border-t pt-4">
                     <span>Total:</span>
+
                     <span>
                       {currency}
                       {getCartTotal() > 200
