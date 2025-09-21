@@ -17,10 +17,6 @@ const CartSummary = () => {
     router,
   } = useShopContext();
 
-  const handleCheckout = () => {
-    router.push("/place-order");
-  };
-
   const handleSignIn = () => {
     router.push("/sign-in");
   };
@@ -127,27 +123,13 @@ const CartSummary = () => {
                 {getCartTotal()}
               </span>
             </div>
-            {isLoaded && user ? (
-              <button
-                className="mt-6 w-full bg-gradient-hero text-white py-3 rounded-lg font-medium hover:bg-gradient-footer cursor-pointer active:scale-95 transition-all duration-300"
-                onClick={handleCheckout}
-              >
-                Check out as {user.firstName || user.email}
-              </button>
-            ) : (
-              <div className="flex flex-col gap-5 justify-center items-center w-full">
-                <button
-                  className="mt-6 w-full bg-gradient-hero text-white py-3 rounded-lg font-medium hover:bg-gradient-footer cursor-pointer active:scale-95 transition-all duration-300
-                onClick={handleSignIn}"
-                >
-                  Sign In to Checkout
-                </button>
 
-                <button className="text-gray-800 hover:text-gray-900 font-medium text-md cursor-pointer">
-                  Or <span className="underline">Continue as Guest</span>
-                </button>
-              </div>
-            )}
+            {/* checkout buttton */}
+            <Link href={"/checkout"}>
+              <button className="mt-6 w-full bg-gradient-hero text-white py-3 rounded-lg font-medium hover:bg-gradient-footer cursor-pointer active:scale-95 transition-all duration-300">
+                Continue to Details
+              </button>
+            </Link>
           </div>
         </>
       )}
