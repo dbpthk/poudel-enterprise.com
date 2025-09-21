@@ -17,35 +17,35 @@ export const ShopProvider = ({ children, initialProducts = [] }) => {
 
   const [imageErrors, setImageErrors] = useState({});
   const [imageLoads, setImageLoads] = useState({});
+  // Track whether we've finished loading from localStorage
+  const [isCartLoaded, setisCartLoaded] = useState(false);
 
   const currency = "$";
   const { user, isLoaded } = useUser();
   const router = useRouter();
 
   // Load cart from localStorage on mount
+
+  // Load cart on mount
   useEffect(() => {
     const storedCart = localStorage.getItem("cartItems");
-    if (storedCart) setCartItems(JSON.parse(storedCart));
+    if (storedCart) {
+      try {
+        setCartItems(JSON.parse(storedCart));
+      } catch {
+        setCartItems([]);
+      }
+    }
+    setisCartLoaded(true);
     setIsLoading(false);
   }, []);
 
-  // Save cart to localStorage whenever it changes
+  // Save cart only after load is complete
   useEffect(() => {
-    localStorage.setItem("cartItems", JSON.stringify(cartItems));
-  }, [cartItems]);
-
-  // Sync cart across tabs
-  useEffect(() => {
-    const handleStorageChange = (event) => {
-      if (event.key === "cartItems") {
-        const updatedCart = event.newValue ? JSON.parse(event.newValue) : [];
-        setCartItems(updatedCart);
-      }
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
+    if (isCartLoaded) {
+      localStorage.setItem("cartItems", JSON.stringify(cartItems));
+    }
+  }, [cartItems, isLoaded]);
 
   // ---------------- CART FUNCTIONS ----------------
   const addToCart = (productId, size, quantity = 1) => {
