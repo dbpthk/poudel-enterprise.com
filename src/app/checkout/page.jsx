@@ -1,30 +1,27 @@
 "use client";
 import Link from "next/link";
 import { useShopContext } from "../_context/ShopContext";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useMemo, useState } from "react";
-import { ShoppingBag } from "lucide-react";
+import { useState } from "react";
+import Cart from "./_checkoutComponent/Cart";
+import CartNav from "./_checkoutComponent/CartNav";
+import { toast } from "sonner";
 
 const Checkout = () => {
+  const { cartItems, userDetails, setUserDetails, isLoading } =
+    useShopContext();
+
   // form state
-  const [fname, setFname] = useState("");
-  const [lname, setLname] = useState("");
-  const [address, setAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [zip, setZip] = useState("");
-  const [country, setCountry] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const {
-    cartItems,
-    getCartTotal,
-    getCartCount,
-    removeFromCart,
-    currency,
-    isLoading,
-  } = useShopContext();
+  const [fname, setFname] = useState(userDetails?.fname || "");
+  const [lname, setLname] = useState(userDetails?.lname || "");
+  const [address, setAddress] = useState(userDetails?.address || "");
+  const [city, setCity] = useState(userDetails?.city || "");
+  const [state, setState] = useState(userDetails?.state || "");
+  const [zip, setZip] = useState(userDetails?.zip || "");
+  const [country, setCountry] = useState(userDetails?.country || "");
+  const [phone, setPhone] = useState(userDetails?.phone || "");
+  const [email, setEmail] = useState(userDetails?.email || "");
+
   const path = usePathname();
 
   if (isLoading) {
@@ -34,11 +31,6 @@ const Checkout = () => {
       </div>
     );
   }
-  const cartLinks = [
-    { tab: "1. Your Cart", link: "/cart" },
-    { tab: "2. Your Details", link: "/checkout" },
-    { tab: "3. Payment", link: "/payment" },
-  ];
 
   // fill dummy data
   const handleFillData = (e) => {
@@ -66,26 +58,56 @@ const Checkout = () => {
     setEmail("");
   };
 
+  //to pass data to payment page
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    if (
+      !fname ||
+      !lname ||
+      !address ||
+      !city ||
+      !state ||
+      !zip ||
+      !country ||
+      !phone ||
+      !email
+    ) {
+      toast.error("Please fill in all required fields.");
+      return;
+    }
+
+    const details = {
+      fname,
+      lname,
+      address,
+      city,
+      state,
+      zip,
+      country,
+      phone,
+      email,
+    };
+
+    // Save in context
+    if (setUserDetails) {
+      setUserDetails(details);
+    }
+
+    // Optionally, still save to localStorage
+    localStorage.setItem("userDetails", JSON.stringify(details));
+
+    // Navigate to payment page
+    window.location.href = "/checkout/payment";
+
+    console.log("User Details set in context:", details);
+  };
+
   return (
     <div className="max-w-6xl mx-auto p-4 mb-30 min-h-[300px]">
       {cartItems.length > 0 ? (
         <>
-          {/* Breadcrumb */}
-          <div className="flex justify-center gap-10 py-2 mx-auto mb-20">
-            {cartLinks.map((item, index) => (
-              <Link href={item.link} key={index}>
-                <span
-                  className={`mx-2 text-sm font-medium   \ ${
-                    item.link === path
-                      ? "text-primary p-2 font-bold border-b-2 border-gray-300"
-                      : "text-gray-600 hover:text-gray-800"
-                  }`}
-                >
-                  {item.tab}
-                </span>
-              </Link>
-            ))}
-          </div>
+          <CartNav path={path} />
 
           {/* delivery informaiton  */}
 
@@ -231,6 +253,7 @@ const Checkout = () => {
                 <button
                   type="submit"
                   className="mt-6 w-full bg-gradient-hero text-white py-3 rounded-lg font-medium hover:bg-gradient-footer cursor-pointer active:scale-95 transition-all duration-300"
+                  onClick={handleSubmit}
                 >
                   Proceed to Payment
                 </button>
@@ -238,96 +261,8 @@ const Checkout = () => {
             </div>
 
             {/* Cart Items */}
-            <div>
-              <div className="flex flex-col justify-between lg:flex-row gap-6 mb-2">
-                <h2 className="text-2xl font-semibold mb-4">Order Summary</h2>
-                <div>
-                  <ShoppingBag /> <span> {getCartCount()} Items </span>
-                </div>
-              </div>
-
-              <div className="flex flex-col border border-gray-300 rounded-xl p-5 min-w-[300px] gap-6">
-                {cartItems.map((item) => (
-                  <div
-                    key={item.id + item.size}
-                    className="flex items-end justify-between border border-gray-200 shadow-2xs p-4 rounded-lg"
-                  >
-                    {/* Left Side: Image + Info */}
-                    <div className="flex flex-col md:flex-row items-center gap-4">
-                      <Link href={`/collection/${item.id}`}>
-                        <Image
-                          src={item.image}
-                          alt={item.name}
-                          width={64}
-                          height={64}
-                          className="rounded object-cover"
-                        />
-                      </Link>
-                      <div>
-                        <h2 className="text-xs sm:text-sm font-medium">
-                          {item.name}
-                        </h2>
-                        <p className="text-sm text-gray-500">
-                          Size: {item.size}
-                        </p>
-                        <p className="text-sm text-gray-700">
-                          {currency}
-                          {item.price} × {item.quantity} ={" "}
-                          <span className="font-semibold">
-                            {currency}
-                            {item.price * item.quantity}
-                          </span>
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Right Side: Controls */}
-
-                    <button
-                      onClick={() => removeFromCart(item.id, item.size)}
-                      className="px-3 text-xs py-1 border rounded text-red-500 hover:bg-red-50"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-
-                {/* Cart Total Section */}
-                <div className="mt-8 p-6 border border-gray-300 drop-shadow-lg rounded-lg bg-gray-50">
-                  <div className="flex justify-between text-lg font-medium">
-                    <span>Subtotal:</span>
-                    <span>
-                      {currency}
-                      {getCartTotal()}
-                    </span>
-                  </div>
-                  <div>
-                    {getCartTotal() > 200 ? (
-                      <p className="text-sm text-green-600 mt-1">
-                        You qualify for free shipping!
-                      </p>
-                    ) : (
-                      <div className="text-sm text-gray-600 mt-1 flex justify-between">
-                        <span>Delivery</span> <span>{currency}20</span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="flex justify-between text-xl font-semibold mt-4 border-t pt-4">
-                    <span>Total:</span>
-
-                    <span>
-                      {currency}
-                      {getCartTotal() > 200
-                        ? getCartTotal()
-                        : getCartTotal() + 20}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <Cart />
           </div>
-          {/* </div> */}
         </>
       ) : (
         <div className="flex flex-col items-center justify-center h-[60vh] text-center">

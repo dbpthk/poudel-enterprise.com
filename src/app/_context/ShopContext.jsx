@@ -10,6 +10,7 @@ export const ShopContext = createContext();
 export const ShopProvider = ({ children, initialProducts = [] }) => {
   const [products, setProducts] = useState(initialProducts);
   const [cartItems, setCartItems] = useState([]);
+  //cart loading
   const [isLoading, setIsLoading] = useState(true);
 
   const [search, setSearch] = useState("");
@@ -19,6 +20,13 @@ export const ShopProvider = ({ children, initialProducts = [] }) => {
   const [imageLoads, setImageLoads] = useState({});
   // Track whether we've finished loading from localStorage
   const [isCartLoaded, setisCartLoaded] = useState(false);
+
+  //get user details from cartpage
+  const [userDetails, setUserDetails] = useState(
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("userDetails") || "{}")
+      : {}
+  );
 
   const currency = "$";
   const { user, isLoaded } = useUser();
@@ -118,6 +126,19 @@ export const ShopProvider = ({ children, initialProducts = [] }) => {
   const getCartTotal = () =>
     cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
+  const clearCart = () => {
+    setCartItems([]);
+  };
+
+  const paymentAmount = useMemo(() => {
+    const total = getCartTotal();
+    if (total > 0) {
+      return total > 200 ? total : total + 20;
+    }
+  }, [getCartTotal(), isCartLoaded]);
+
+  console.log("pay", paymentAmount);
+
   // ---------------- IMAGE HELPERS ----------------
   const handleImageError = (imagePath) => {
     setImageErrors((prev) => ({ ...prev, [imagePath]: true }));
@@ -138,8 +159,12 @@ export const ShopProvider = ({ children, initialProducts = [] }) => {
       decreaseQuantity,
       getCartCount,
       cartCount,
+      clearCart,
       getCartTotal,
+      paymentAmount,
       currency,
+      userDetails,
+      setUserDetails,
 
       search,
       setSearch,

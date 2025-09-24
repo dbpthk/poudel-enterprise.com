@@ -9,7 +9,7 @@ import { useShopContext } from "../_context/ShopContext";
 import { useUser, UserButton } from "@clerk/nextjs";
 
 const Navbar = () => {
-  const { search, setSearch, cartCount } = useShopContext();
+  const { search, setSearch, cartCount, currency } = useShopContext();
   const [inputValue, setInputValue] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -63,14 +63,14 @@ const Navbar = () => {
     >
       {/* Top Banner */}
 
-      <div className="hidden sm:flex w-full h-[30px] bg-gray-800 justify-center items-center gap-4 text-sm text-white font-medium">
-        <p className="flex items-center gap-1">
+      <div className="flex w-full h-[30px] bg-gray-800 justify-center items-center gap-4 text-xs sm:text-sm text-white font-medium">
+        <p className="hidden sm:flex items-center gap-1">
           <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
           Free Click & Collect
         </p>
         <p className="flex items-center gap-1">
           <span className="w-2 h-2 bg-blue-400 rounded-full animate-pulse"></span>
-          Free Shipping on orders over $100
+          Free Shipping on orders over {currency}200
         </p>
         <p className="flex items-center gap-1">
           <span className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></span>

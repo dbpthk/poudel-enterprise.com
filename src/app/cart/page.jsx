@@ -10,11 +10,9 @@ const CartSummary = () => {
     decreaseQuantity,
     removeFromCart,
     addToCart,
-    currency,
-    user,
-    isLoaded,
     isLoading,
     router,
+    currency,
   } = useShopContext();
 
   const handleSignIn = () => {
