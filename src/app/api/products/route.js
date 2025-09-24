@@ -61,11 +61,14 @@
 
 import { db } from "../../../lib/db";
 import { products } from "../../../lib/schema";
-import { eq } from "drizzle-orm";
+import { desc, eq } from "drizzle-orm";
 
 export async function GET() {
   try {
-    const allProducts = await db.select().from(products);
+    const allProducts = await db
+      .select()
+      .from(products)
+      .orderBy(desc(products.date));
     return Response.json(allProducts);
   } catch (err) {
     return Response.json(
@@ -81,7 +84,7 @@ export async function POST(req) {
     const newProduct = await db
       .insert(products)
       .values({
-        image: body.image,
+        images: body.images,
         name: body.name,
         category: body.category,
         subCategory: body.subCategory,

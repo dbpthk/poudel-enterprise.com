@@ -19,6 +19,7 @@ const Navbar = () => {
   const profileRef = useRef(null);
   const searchRef = useRef(null);
   const { user, isLoaded } = useUser();
+  //links loading state
 
   const navItems = [
     { path: "/", label: "HOME", icon: "🏠" },

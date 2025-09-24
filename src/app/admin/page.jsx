@@ -6,7 +6,7 @@ import { useShopContext } from "../_context/ShopContext";
 
 export default function AdminPage() {
   const [formData, setFormData] = useState({
-    image: [],
+    images: [],
     name: "",
     category: "",
     subCategory: "",
@@ -20,6 +20,7 @@ export default function AdminPage() {
   const [message, setMessage] = useState("");
   const [editingId, setEditingId] = useState(null);
   const { user, isLoaded } = useShopContext();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // if (!isLoaded) return <p>Loading...</p>;
   const isAdmin = user?.publicMetadata?.role === "admin";
@@ -45,6 +46,7 @@ export default function AdminPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmitting(true);
 
     const method = editingId ? "PUT" : "POST";
     const url = editingId ? `/api/products/${editingId}` : "/api/products";
@@ -66,27 +68,32 @@ export default function AdminPage() {
       const data = await res.json();
       setMessage(data.message || data.error);
 
-      setFormData({
-        image: [],
-        name: "",
-        category: "",
-        subCategory: "",
-        description: "",
-        price: "",
-        sizes: "",
-        bestseller: false,
-      });
-      setEditingId(null);
-      fetchProducts();
+      // Reset form only if success
+      if (res.ok) {
+        setFormData({
+          images: [],
+          name: "",
+          category: "",
+          subCategory: "",
+          description: "",
+          price: "",
+          sizes: "",
+          bestseller: false,
+        });
+        setEditingId(null);
+        fetchProducts();
+      }
     } catch (err) {
       console.error(err);
       setMessage("Something went wrong!");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleEdit = (product) => {
     setFormData({
-      image: product.image || [],
+      images: product.images || [],
       name: product.name,
       category: product.category,
       subCategory: product.subCategory,
@@ -95,7 +102,7 @@ export default function AdminPage() {
       sizes: product.sizes.join(","),
       bestseller: product.bestseller,
     });
-    setEditingId(product._id);
+    setEditingId(product.id);
   };
 
   const handleDelete = async (id) => {
@@ -124,19 +131,29 @@ export default function AdminPage() {
           >
             <input
               type="file"
-              name="image"
+              name="images"
               onChange={async (e) => {
                 const file = e.target.files[0];
-                const formData = new FormData();
-                formData.append("file", file);
-                console.log(formData);
+                if (!file) return;
+                const uploadForm = new FormData();
+                uploadForm.append("file", file);
 
-                const res = await fetch("/api/upload", {
-                  method: "POST",
-                  body: formData,
-                });
-                const data = await res.json();
-                setFormData({ ...formData, image: data.url });
+                try {
+                  const res = await fetch("/api/upload", {
+                    method: "POST",
+                    body: uploadForm,
+                  });
+                  if (!res.ok) {
+                    const err = await res.text();
+                    throw new Error(err || "Upload failed");
+                  }
+                  const data = await res.json();
+                  // ensure image is stored as an array (component expects an array)
+                  setFormData((prev) => ({ ...prev, images: [data.url] }));
+                } catch (err) {
+                  console.error("Upload error:", err);
+                  setMessage("Image upload failed");
+                }
               }}
             />
 
@@ -213,7 +230,11 @@ export default function AdminPage() {
               type="submit"
               className="bg-blue-600 cursor-pointer text-white py-2 rounded hover:bg-blue-700"
             >
-              {editingId ? "Update Product" : "Add Product"}
+              {isSubmitting
+                ? "Saving..."
+                : editingId
+                ? "Update Product"
+                : "Add Product"}
             </button>
           </form>
 
@@ -224,13 +245,13 @@ export default function AdminPage() {
             {products.length === 0 && <p>Loading Products....</p>}
             {products.map((p) => (
               <div
-                key={p._id}
+                key={p.id}
                 className="border p-4 rounded flex justify-between items-center"
               >
                 <div>
-                  {p.image && p.image[0] && (
+                  {p.images && p.images[0] && (
                     <Image
-                      src={p.image[0]}
+                      src={p.images[0]}
                       width={50}
                       height={50}
                       alt="product image"
@@ -253,7 +274,7 @@ export default function AdminPage() {
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(p._id)}
+                    onClick={() => handleDelete(p.id)}
                     className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
                   >
                     Delete

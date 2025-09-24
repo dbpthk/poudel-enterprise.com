@@ -29,8 +29,8 @@
 //   return Response.json({ message: "Product deleted successfully" });
 // }
 
-import { db } from "@/lib/db";
-import { products } from "@/drizzle/schema";
+import { db } from "../../../../lib/db";
+import { products } from "../../../../lib/schema";
 import { eq } from "drizzle-orm";
 
 export async function GET(req, { params }) {
