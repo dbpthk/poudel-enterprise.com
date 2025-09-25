@@ -48,7 +48,7 @@ export default function AdminPage() {
     };
   }, [previewImages]);
 
-  if (!user || !isLoaded) {
+  if (!isLoaded) {
     return (
       <div className="flex justify-center items-center min-h-[300px]">
         <div className="w-8 h-8 rounded-full border-2 border-gray-300 border-t-gray-500 animate-spin "></div>
@@ -222,6 +222,7 @@ export default function AdminPage() {
                   onChange={handleImageUpload}
                   className="hidden"
                   required
+                  disabled={!isAdmin}
                 />
               </label>
 
@@ -251,6 +252,7 @@ export default function AdminPage() {
               onChange={handleChange}
               className="border border-gray-400 p-3 rounded-xl"
               required
+              disabled={!isAdmin}
             />
 
             <select
@@ -259,6 +261,7 @@ export default function AdminPage() {
               onChange={handleChange}
               className="border border-gray-400 p-3 rounded-xl"
               required
+              disabled={!isAdmin}
             >
               <option value="">Select Category</option>
               <option value="Men">Men</option>
@@ -272,6 +275,7 @@ export default function AdminPage() {
               onChange={handleChange}
               className="border border-gray-400 p-3 rounded-xl"
               required
+              disabled={!isAdmin}
             >
               <option value="">Select Subcategory</option>
               <option value="Topwear">Topwear</option>
@@ -286,6 +290,7 @@ export default function AdminPage() {
               onChange={handleChange}
               className="border border-gray-400 p-3 rounded-xl"
               required
+              disabled={!isAdmin}
             />
 
             <input
@@ -296,6 +301,7 @@ export default function AdminPage() {
               onChange={handleChange}
               className="border border-gray-400 p-3 rounded-xl"
               required
+              disabled={!isAdmin}
             />
 
             <input
@@ -306,6 +312,7 @@ export default function AdminPage() {
               onChange={handleChange}
               className="border border-gray-400 p-3 rounded-xl"
               required
+              disabled={!isAdmin}
             />
 
             <label className="flex items-center gap-2">
@@ -315,12 +322,14 @@ export default function AdminPage() {
                 checked={formData.bestseller}
                 onChange={handleChange}
                 required
+                disabled={!isAdmin}
               />
               Bestseller
             </label>
 
             <button
               type="submit"
+              disabled={!isAdmin}
               className="bg-gradient-footer cursor-pointer text-white py-2 rounded hover:bg-blue-700"
             >
               {isSubmitting
