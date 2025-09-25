@@ -99,6 +99,13 @@ export default function AdminPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    //  Prompt for admin password
+    const password = prompt("Enter admin password to save changes:");
+    if (!password) {
+      setMessage("Password is required to submit changes.");
+      return;
+    }
     setIsSubmitting(true);
 
     const method = editingId ? "PUT" : "POST";
@@ -109,6 +116,7 @@ export default function AdminPage() {
       price: Number(formData.price),
       sizes: formData.sizes.split(",").map((s) => s.trim()),
       bestseller: Boolean(formData.bestseller),
+      editPassword: password, // send password for backend verification
     };
 
     try {
@@ -213,6 +221,7 @@ export default function AdminPage() {
                   multiple
                   onChange={handleImageUpload}
                   className="hidden"
+                  required
                 />
               </label>
 
@@ -241,6 +250,7 @@ export default function AdminPage() {
               value={formData.name}
               onChange={handleChange}
               className="border border-gray-400 p-3 rounded-xl"
+              required
             />
 
             <select
@@ -248,6 +258,7 @@ export default function AdminPage() {
               value={formData.category}
               onChange={handleChange}
               className="border border-gray-400 p-3 rounded-xl"
+              required
             >
               <option value="">Select Category</option>
               <option value="Men">Men</option>
@@ -260,6 +271,7 @@ export default function AdminPage() {
               value={formData.subCategory}
               onChange={handleChange}
               className="border border-gray-400 p-3 rounded-xl"
+              required
             >
               <option value="">Select Subcategory</option>
               <option value="Topwear">Topwear</option>
@@ -273,6 +285,7 @@ export default function AdminPage() {
               value={formData.description}
               onChange={handleChange}
               className="border border-gray-400 p-3 rounded-xl"
+              required
             />
 
             <input
@@ -282,6 +295,7 @@ export default function AdminPage() {
               value={formData.price}
               onChange={handleChange}
               className="border border-gray-400 p-3 rounded-xl"
+              required
             />
 
             <input
@@ -291,6 +305,7 @@ export default function AdminPage() {
               value={formData.sizes}
               onChange={handleChange}
               className="border border-gray-400 p-3 rounded-xl"
+              required
             />
 
             <label className="flex items-center gap-2">
@@ -299,6 +314,7 @@ export default function AdminPage() {
                 name="bestseller"
                 checked={formData.bestseller}
                 onChange={handleChange}
+                required
               />
               Bestseller
             </label>

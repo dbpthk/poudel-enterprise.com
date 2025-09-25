@@ -18,6 +18,13 @@ export async function GET(req, { params }) {
 export async function PUT(req, { params }) {
   try {
     const body = await req.json();
+
+    if (body.editPassword?.trim() !== process.env.ADMIN_DELETE_PASS?.trim()) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+      });
+    }
+
     const updated = await db
       .update(products)
       .set({

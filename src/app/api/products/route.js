@@ -20,6 +20,13 @@ export async function GET() {
 export async function POST(req) {
   try {
     const body = await req.json();
+
+    if (body.editPassword?.trim() !== process.env.ADMIN_DELETE_PASS?.trim()) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+      });
+    }
+
     const newProduct = await db
       .insert(products)
       .values({
