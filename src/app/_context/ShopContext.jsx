@@ -1,6 +1,13 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect, useMemo } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  useCallback,
+} from "react";
 import { toast } from "sonner";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
@@ -123,8 +130,10 @@ export const ShopProvider = ({ children, initialProducts = [] }) => {
 
   const cartCount = useMemo(() => getCartCount(), [cartItems]);
 
-  const getCartTotal = () =>
-    cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const getCartTotal = useCallback(
+    () => cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0),
+    [cartItems]
+  );
 
   const clearCart = () => {
     setCartItems([]);
@@ -135,9 +144,9 @@ export const ShopProvider = ({ children, initialProducts = [] }) => {
     if (total > 0) {
       return total > 200 ? total : total + 20;
     }
-  }, [getCartTotal(), isCartLoaded]);
+  }, [getCartTotal]);
 
-  console.log("pay", paymentAmount);
+  console.log("pay this", paymentAmount);
 
   // ---------------- IMAGE HELPERS ----------------
   const handleImageError = (imagePath) => {

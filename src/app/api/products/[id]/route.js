@@ -1,34 +1,4 @@
-// import { products as initialProducts } from "../../../_config/assets";
-// let products = [...initialProducts];
-
-// export async function PUT(req, { params }) {
-//   const { id } = params;
-//   const body = await req.json();
-
-//   const index = products.findIndex((p) => p._id === id);
-//   if (index === -1)
-//     return Response.json({ error: "Product not found" }, { status: 404 });
-
-//   products[index] = {
-//     ...products[index],
-//     ...body,
-//     image: Array.isArray(body.image) ? body.image : body.image.split(","),
-//     sizes: Array.isArray(body.sizes) ? body.sizes : body.sizes.split(","),
-//     bestseller: Boolean(body.bestseller),
-//   };
-
-//   return Response.json({
-//     message: "Product updated successfully",
-//     product: products[index],
-//   });
-// }
-
-// export async function DELETE(req, { params }) {
-//   const { id } = params;
-//   products = products.filter((p) => p._id !== id);
-//   return Response.json({ message: "Product deleted successfully" });
-// }
-
+import { toast } from "sonner";
 import { db } from "../../../../lib/db";
 import { products } from "../../../../lib/schema";
 import { eq } from "drizzle-orm";
@@ -51,7 +21,7 @@ export async function PUT(req, { params }) {
     const updated = await db
       .update(products)
       .set({
-        image: body.image,
+        images: body.images,
         name: body.name,
         category: body.category,
         subCategory: body.subCategory,
@@ -73,6 +43,15 @@ export async function PUT(req, { params }) {
 }
 
 export async function DELETE(req, { params }) {
+  const { password } = await req.json();
+
+  if (password !== process.env.ADMIN_DELETE_PASS) {
+    return new Response(
+      JSON.stringify({ error: "Unauthorized: Invalid password" }),
+      { status: 401 }
+    );
+  }
+
   try {
     await db.delete(products).where(eq(products.id, Number(params.id)));
     return Response.json({ message: "Product deleted" });

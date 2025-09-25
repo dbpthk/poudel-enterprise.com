@@ -1,8 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
-import { UploadButton } from "@uploadthing/react";
 import Image from "next/image";
 import { useShopContext } from "../_context/ShopContext";
+import { toast } from "sonner";
+import { useUser } from "@clerk/nextjs";
 
 export default function AdminPage() {
   const [formData, setFormData] = useState({
@@ -19,10 +20,10 @@ export default function AdminPage() {
   const [products, setProducts] = useState([]);
   const [message, setMessage] = useState("");
   const [editingId, setEditingId] = useState(null);
-  const { user, isLoaded } = useShopContext();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // if (!isLoaded) return <p>Loading...</p>;
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [previewImages, setPreviewImages] = useState([]);
+  const { user, isLoaded } = useUser();
   const isAdmin = user?.publicMetadata?.role === "admin";
 
   const fetchProducts = async () => {
@@ -39,9 +40,61 @@ export default function AdminPage() {
     fetchProducts();
   }, []);
 
+  // inside your component
+  useEffect(() => {
+    return () => {
+      // cleanup all preview URLs on unmount
+      previewImages.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [previewImages]);
+
+  if (!user || !isLoaded) {
+    return (
+      <div className="flex justify-center items-center min-h-[300px]">
+        <div className="w-8 h-8 rounded-full border-2 border-gray-300 border-t-gray-500 animate-spin "></div>
+        {/* Loading... */}
+      </div>
+    );
+  }
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleImageUpload = async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+
+    setPreviewImages((prev) => [
+      ...prev,
+      ...files.map((f) => URL.createObjectURL(f)),
+    ]);
+
+    const formData = new FormData();
+    files.forEach((file) => formData.append("file", file)); // append all files to the same FormData
+
+    try {
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        body: formData, // DO NOT set Content-Type manually!
+      });
+
+      if (!res.ok) throw new Error("Upload failed");
+
+      const data = await res.json();
+      // inside handleImageUpload, safer merge:
+      setFormData((prev) => ({
+        ...prev,
+        images: [...(prev.images || []), ...data.urls],
+      }));
+    } catch (err) {
+      console.error("Upload error:", err);
+      setMessage("Image upload failed");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -68,7 +121,6 @@ export default function AdminPage() {
       const data = await res.json();
       setMessage(data.message || data.error);
 
-      // Reset form only if success
       if (res.ok) {
         setFormData({
           images: [],
@@ -80,6 +132,7 @@ export default function AdminPage() {
           sizes: "",
           bestseller: false,
         });
+        setPreviewImages([]);
         setEditingId(null);
         fetchProducts();
       }
@@ -102,14 +155,34 @@ export default function AdminPage() {
       sizes: product.sizes.join(","),
       bestseller: product.bestseller,
     });
+    setPreviewImages(product.images || []);
     setEditingId(product.id);
   };
 
   const handleDelete = async (id) => {
-    if (!confirm("Are you sure you want to delete this product?")) return;
+    const confirmDelete = confirm(
+      "Are you sure you want to delete this product?"
+    );
+    if (!confirmDelete) return;
+
+    const password = prompt("Enter admin password to delete:");
+    if (!password) return;
+
     try {
-      await fetch(`/api/products/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/products/${id}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error || "Failed to delete");
+        return;
+      }
+
       fetchProducts();
+      toast.success("Product deleted");
     } catch (err) {
       console.error(err);
       setMessage("Failed to delete product");
@@ -121,41 +194,45 @@ export default function AdminPage() {
       {isAdmin ? (
         <div className="p-6 max-w-6xl mx-auto">
           <h1 className="text-4xl font-bold mb-8 text-center">Admin Panel</h1>
-          <p className="text-xl font-medium text-center mb-4">
-            ✅ Welcome Admin {user?.firstName}
+          <p className="text-xl font-heading text-center mb-4">
+            ✅ Welcome {user?.firstName}
           </p>
 
           <form
             onSubmit={handleSubmit}
-            className="flex flex-col gap-4 border p-4 rounded mb-8"
+            className="flex flex-col gap-4 border border-gray-300 p-4 rounded-xl mb-8 shadow-lg"
           >
-            <input
-              type="file"
-              name="images"
-              onChange={async (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                const uploadForm = new FormData();
-                uploadForm.append("file", file);
+            {/* Styled file input with thumbnails */}
+            <div className=" shadow-lg border-1 border-gray-300 rounded-xl p-4 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 transition">
+              <label className="cursor-pointer font-body text-gray-600">
+                Click to add Images here
+                <input
+                  type="file"
+                  name="file"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageUpload}
+                  className="hidden"
+                />
+              </label>
 
-                try {
-                  const res = await fetch("/api/upload", {
-                    method: "POST",
-                    body: uploadForm,
-                  });
-                  if (!res.ok) {
-                    const err = await res.text();
-                    throw new Error(err || "Upload failed");
-                  }
-                  const data = await res.json();
-                  // ensure image is stored as an array (component expects an array)
-                  setFormData((prev) => ({ ...prev, images: [data.url] }));
-                } catch (err) {
-                  console.error("Upload error:", err);
-                  setMessage("Image upload failed");
-                }
-              }}
-            />
+              {previewImages.length > 0 && (
+                <div className="flex gap-2 mt-4 flex-wrap">
+                  {previewImages.map((src, idx) => (
+                    <div
+                      key={idx}
+                      className="w-24 h-24 relative border rounded overflow-hidden"
+                    >
+                      <img
+                        src={src}
+                        alt={`Preview ${idx}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
 
             <input
               type="text"
@@ -163,14 +240,14 @@ export default function AdminPage() {
               placeholder="Product Name"
               value={formData.name}
               onChange={handleChange}
-              className="border p-2 rounded"
+              className="border border-gray-400 p-3 rounded-xl"
             />
 
             <select
               name="category"
               value={formData.category}
               onChange={handleChange}
-              className="border p-2 rounded"
+              className="border border-gray-400 p-3 rounded-xl"
             >
               <option value="">Select Category</option>
               <option value="Men">Men</option>
@@ -182,7 +259,7 @@ export default function AdminPage() {
               name="subCategory"
               value={formData.subCategory}
               onChange={handleChange}
-              className="border p-2 rounded"
+              className="border border-gray-400 p-3 rounded-xl"
             >
               <option value="">Select Subcategory</option>
               <option value="Topwear">Topwear</option>
@@ -195,7 +272,7 @@ export default function AdminPage() {
               placeholder="Description"
               value={formData.description}
               onChange={handleChange}
-              className="border p-2 rounded"
+              className="border border-gray-400 p-3 rounded-xl"
             />
 
             <input
@@ -204,7 +281,7 @@ export default function AdminPage() {
               placeholder="Price"
               value={formData.price}
               onChange={handleChange}
-              className="border p-2 rounded"
+              className="border border-gray-400 p-3 rounded-xl"
             />
 
             <input
@@ -213,7 +290,7 @@ export default function AdminPage() {
               placeholder="Sizes (comma-separated)"
               value={formData.sizes}
               onChange={handleChange}
-              className="border p-2 rounded"
+              className="border border-gray-400 p-3 rounded-xl"
             />
 
             <label className="flex items-center gap-2">
@@ -228,7 +305,7 @@ export default function AdminPage() {
 
             <button
               type="submit"
-              className="bg-blue-600 cursor-pointer text-white py-2 rounded hover:bg-blue-700"
+              className="bg-gradient-footer cursor-pointer text-white py-2 rounded hover:bg-blue-700"
             >
               {isSubmitting
                 ? "Saving..."
@@ -246,21 +323,22 @@ export default function AdminPage() {
             {products.map((p) => (
               <div
                 key={p.id}
-                className="border p-4 rounded flex justify-between items-center"
+                className="border bg-color-accent border-gray-400 p-3 rounded-xl flex justify-between items-center"
               >
                 <div>
                   {p.images && p.images[0] && (
                     <Image
                       src={p.images[0]}
-                      width={50}
-                      height={50}
+                      width={70}
+                      height={70}
                       alt="product image"
+                      className="border border-gray-200"
                     />
                   )}
-                  <p>
-                    <strong>{p.name}</strong>
+                  <p className="font-medium text-color-primary text-sm sm:text-lg">
+                    {p.name}
                   </p>
-                  <p>
+                  <p className="text-sm sm:text-md">
                     {p.category} - {p.subCategory}
                   </p>
                   <p>Price: ${p.price}</p>
@@ -269,13 +347,13 @@ export default function AdminPage() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleEdit(p)}
-                    className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                    className="bg-gray-800 text-white px-3 py-1 rounded-lg hover:bg-yellow-600"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => handleDelete(p.id)}
-                    className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700"
+                    className="bg-red-600 text-white px-3 py-1 rounded-lg hover:bg-red-700"
                   >
                     Delete
                   </button>
