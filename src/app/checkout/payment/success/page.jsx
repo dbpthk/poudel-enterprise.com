@@ -7,49 +7,42 @@ import Link from "next/link";
 
 export default function CheckoutSuccess() {
   const searchParams = useSearchParams();
-  const { clearCart, paymentAmount, currency } = useShopContext();
+  const { clearCart } = useShopContext();
   const [status, setStatus] = useState("processing"); // processing | success | failed
+  const [order, setOrder] = useState(null);
 
   useEffect(() => {
-    if (!searchParams) return;
-    const paymentIntentId = searchParams.get("payment_intent");
-    if (!paymentIntentId) {
-      setStatus("failed");
-      return;
-    }
+    const orderId = searchParams.get("orderId");
+    if (!orderId) return;
 
     const interval = setInterval(async () => {
       try {
-        const res = await fetch("/api/verify-payment", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ payment_intent: paymentIntentId }),
-        });
-
+        const res = await fetch(`/api/orders/${orderId}`);
+        if (!res.ok) throw new Error("Failed to fetch order");
         const data = await res.json();
 
-        if (data.status === "succeeded") {
+        setOrder(data);
+
+        if (data.status === "paid") {
+          clearInterval(interval);
           clearCart();
           setStatus("success");
+        } else if (data.status === "failed") {
           clearInterval(interval);
-        } else if (data.status === "requires_payment_method") {
           setStatus("failed");
-          clearInterval(interval);
-        } else {
-          setStatus("processing"); // still pending
         }
       } catch (err) {
-        console.error("Error verifying payment:", err);
-        setStatus("failed");
+        console.error(err);
         clearInterval(interval);
+        setStatus("failed");
       }
-    }, 2000);
+    }, 3000); // check every 3s
 
     return () => clearInterval(interval);
   }, [searchParams, clearCart]);
 
   return (
-    <div className="flex flex-col items-center justify-center h-[60vh] gap-4 text-center p-4">
+    <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 p-4 text-center">
       {status === "processing" && (
         <>
           <p className="text-gray-700 text-lg">Payment is processing...</p>
@@ -57,13 +50,34 @@ export default function CheckoutSuccess() {
         </>
       )}
 
-      {status === "success" && (
+      {status === "success" && order && (
         <>
           <h1 className="text-2xl font-bold text-green-600">
-            Payment of {currency}
-            {paymentAmount} is Successful 🎉
+            Payment of ${(order.amount / 100).toFixed(2)} AUD is Successful 🎉
           </h1>
           <p className="text-gray-700 mt-2">Thank you for your order!</p>
+
+          {order.items && order.items.length > 0 && (
+            <div className="mt-4 w-full max-w-lg border rounded-lg p-4">
+              <h2 className="text-lg font-semibold mb-2">Your Order:</h2>
+              <ul className="space-y-2">
+                {order.items.map((item) => (
+                  <li key={item.productId} className="flex justify-between">
+                    <span>
+                      {item.name} x {item.quantity}
+                    </span>
+                    <span>
+                      ${((item.price * item.quantity) / 100).toFixed(2)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <div className="mt-2 font-bold text-right">
+                Total: ${(order.amount / 100).toFixed(2)}
+              </div>
+            </div>
+          )}
+
           <Link href="/collection">
             <button className="mt-4 bg-gradient-hero text-white px-6 py-3 rounded-lg font-medium hover:bg-gradient-footer transition-all duration-300">
               Continue Shopping
@@ -74,9 +88,7 @@ export default function CheckoutSuccess() {
 
       {status === "failed" && (
         <>
-          <h1 className="text-2xl font-bold text-red-600">
-            Payment failed. ❌
-          </h1>
+          <h1 className="text-2xl font-bold text-red-600">Payment failed ❌</h1>
           <p className="text-gray-700 mt-2">Please try again.</p>
           <Link href="/checkout">
             <button className="mt-4 bg-gray-200 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-300 transition-all duration-300">

@@ -14,15 +14,16 @@ import Cart from "../_checkoutComponent/Cart";
 import DeliveryDetails from "../_checkoutComponent/DeliveryDetails";
 import convertToCents from "../../../lib/convertToCents";
 import { usePathname } from "next/navigation";
+import { useUser } from "@clerk/nextjs"; // ✅ get Clerk user
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
 );
 
-const CheckoutPaymentForm = ({ clientSecret }) => {
+const CheckoutPaymentForm = ({ clientSecret, orderId }) => {
   const stripe = useStripe();
   const elements = useElements();
-  const { paymentAmount, currency, isCartLoaded } = useShopContext();
+  const { paymentAmount, currency, clearCart } = useShopContext();
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
 
@@ -40,17 +41,17 @@ const CheckoutPaymentForm = ({ clientSecret }) => {
     const { error, paymentIntent } = await stripe.confirmPayment({
       elements,
       confirmParams: {
-        return_url: `${window.location.origin}/checkout/payment/success`,
+        return_url: `${window.location.origin}/checkout/payment/success?orderId=${orderId}`,
       },
-      redirect: "if_required", // prevents double redirect
+      redirect: "if_required",
     });
 
     if (error) {
       setErrorMessage(error.message);
     } else if (paymentIntent && paymentIntent.status === "succeeded") {
-      // ✅ Clear cart here
-      // clearCart();
-      window.location.href = "/checkout/payment/success";
+      // optional: you can clear cart immediately here if you want
+      clearCart();
+      window.location.href = `/checkout/payment/success?orderId=${orderId}`;
     } else {
       setErrorMessage("Payment could not be completed. Please try again.");
     }
@@ -85,33 +86,47 @@ const CheckoutPaymentForm = ({ clientSecret }) => {
 
 const Payment = () => {
   const [clientSecret, setClientSecret] = useState(null);
-  const { paymentAmount } = useShopContext();
+  const [orderId, setOrderId] = useState(null); // ✅ store orderId
+  const { paymentAmount, cartItems } = useShopContext();
+  const { user } = useUser();
   const path = usePathname();
 
   useEffect(() => {
     const createPaymentIntent = async () => {
+      if (!user) return;
+
       const res = await fetch("/api/create-payment-intent", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: convertToCents(paymentAmount) }),
+        body: JSON.stringify({
+          amount: convertToCents(paymentAmount),
+          cartItems,
+          userId: user.id,
+        }),
       });
+
       const data = await res.json();
       setClientSecret(data.clientSecret);
+      setOrderId(data.orderId); // ✅ get orderId from backend
     };
+
     createPaymentIntent();
-  }, [paymentAmount]);
+  }, [paymentAmount, cartItems, user]);
 
   return (
     <div className="max-w-6xl mx-auto p-4 mb-30 min-h-[300px]">
       <CartNav path={path} />
-      {clientSecret ? (
+      {clientSecret && orderId ? (
         <Elements
           stripe={stripePromise}
           options={{ clientSecret, appearance: { theme: "stripe" } }}
         >
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
             <div className="lg:col-span-2">
-              <CheckoutPaymentForm clientSecret={clientSecret} />
+              <CheckoutPaymentForm
+                clientSecret={clientSecret}
+                orderId={orderId}
+              />
             </div>
             <div className="lg:col-span-1">
               <Cart />

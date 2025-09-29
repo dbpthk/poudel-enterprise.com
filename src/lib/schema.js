@@ -21,3 +21,14 @@ export const products = pgTable("products", {
   date: timestamp("date").defaultNow(),
   bestseller: boolean("bestseller").default(false),
 });
+
+// orders table
+export const orders = pgTable("orders", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  items: json("items").notNull(), // store array of cart items
+  amount: integer("amount").notNull(), // total order amount
+  status: text("status").default("pending"), // pending / paid / failed
+  stripeId: text("stripe_id"),
+  createdAt: timestamp("created_at").defaultNow(),
+});

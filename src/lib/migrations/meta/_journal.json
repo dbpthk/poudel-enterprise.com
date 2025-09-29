@@ -15,6 +15,20 @@
       "when": 1758008919910,
       "tag": "0001_cold_juggernaut",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1759139835692,
+      "tag": "0002_skinny_young_avengers",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1759141338551,
+      "tag": "0003_common_umar",
+      "breakpoints": true
     }
   ]
 }

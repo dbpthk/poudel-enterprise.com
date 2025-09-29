@@ -94,7 +94,7 @@ const Checkout = () => {
       setUserDetails(details);
     }
 
-    // Optionally, still save to localStorage
+    //still save to localStorage
     localStorage.setItem("userDetails", JSON.stringify(details));
 
     // Navigate to payment page
@@ -104,7 +104,7 @@ const Checkout = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-4 mb-30 min-h-[300px]">
+    <div className="max-w-6xl mx-auto p-5 mb-30 min-h-[300px]">
       {cartItems.length > 0 ? (
         <>
           <CartNav path={path} />

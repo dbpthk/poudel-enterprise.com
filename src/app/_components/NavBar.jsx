@@ -341,7 +341,24 @@ const Navbar = () => {
                 </Link>
 
                 <div className="flex gap-4 px-4 py-4">
-                  Account <UserButton />
+                  Account
+                  <UserButton>
+                    <UserButton.MenuItems>
+                      <UserButton.Link
+                        label="View Orders"
+                        labelIcon="📦"
+                        href="/orders"
+                      />
+                      {/* ADMIN LINK ONLY FOR ADMINS */}
+                      {user?.publicMetadata?.role === "admin" && (
+                        <UserButton.Link
+                          label="Admin"
+                          labelIcon="🛠️"
+                          href="/admin"
+                        />
+                      )}
+                    </UserButton.MenuItems>
+                  </UserButton>
                 </div>
               </div>
             ) : (
