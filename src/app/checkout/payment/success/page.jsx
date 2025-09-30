@@ -62,13 +62,11 @@ export default function CheckoutSuccess() {
               <h2 className="text-lg font-semibold mb-2">Your Order:</h2>
               <ul className="space-y-2">
                 {order.items.map((item) => (
-                  <li key={item.productId} className="flex justify-between">
+                  <li key={item.id} className="flex justify-between">
                     <span>
                       {item.name} x {item.quantity}
                     </span>
-                    <span>
-                      ${((item.price * item.quantity) / 100).toFixed(2)}
-                    </span>
+                    <span>${(item.price * item.quantity).toFixed(2)}</span>
                   </li>
                 ))}
               </ul>
