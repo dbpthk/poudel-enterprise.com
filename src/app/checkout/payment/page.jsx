@@ -14,7 +14,8 @@ import Cart from "../_checkoutComponent/Cart";
 import DeliveryDetails from "../_checkoutComponent/DeliveryDetails";
 import convertToCents from "../../../lib/convertToCents";
 import { usePathname } from "next/navigation";
-import { useUser } from "@clerk/nextjs"; // ✅ get Clerk user
+import { useUser, SignInButton } from "@clerk/nextjs"; // ✅ get Clerk user
+import { useRouter } from "next/navigation";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
@@ -88,8 +89,9 @@ const Payment = () => {
   const [clientSecret, setClientSecret] = useState(null);
   const [orderId, setOrderId] = useState(null); // ✅ store orderId
   const { paymentAmount, cartItems } = useShopContext();
-  const { user } = useUser();
+  const { user, isSignedIn } = useUser();
   const path = usePathname();
+  const router = useRouter();
 
   useEffect(() => {
     const createPaymentIntent = async () => {
@@ -116,7 +118,21 @@ const Payment = () => {
   return (
     <div className="max-w-6xl mx-auto p-4 mb-30 min-h-[300px]">
       <CartNav path={path} />
-      {clientSecret && orderId ? (
+      {!user ? (
+        <div className="flex flex-col items-center justify-center h-[70vh] text-center px-4">
+          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+            You must be signed in to proceed to checkout
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Please sign in to continue with your payment.
+          </p>
+          <SignInButton mode="page" redirecturl={window.location.href}>
+            <button className="px-6 py-2 bg-black text-white rounded-lg shadow hover:bg-gray-800 transition cursor-pointer">
+              Sign In
+            </button>
+          </SignInButton>
+        </div>
+      ) : clientSecret && orderId ? (
         <Elements
           stripe={stripePromise}
           options={{ clientSecret, appearance: { theme: "stripe" } }}
@@ -136,7 +152,7 @@ const Payment = () => {
       ) : (
         <div className="flex items-center justify-center h-[60vh]">
           <div
-            className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent text-gray-700 dark:text-white"
+            className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-e-transparent text-gray-700"
             role="status"
           >
             <span className="sr-only">Loading...</span>
