@@ -1,18 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { useShopContext } from "../../../_context/ShopContext";
 import Link from "next/link";
 
-export default function CheckoutSuccess() {
-  const searchParams = useSearchParams();
+export default function CheckoutSuccess({ searchParams }) {
+  const orderId = searchParams?.orderId;
   const { clearCart } = useShopContext();
   const [status, setStatus] = useState("processing"); // processing | success | failed
   const [order, setOrder] = useState(null);
 
   useEffect(() => {
-    const orderId = searchParams.get("orderId");
     if (!orderId) return;
 
     const interval = setInterval(async () => {
@@ -21,13 +19,21 @@ export default function CheckoutSuccess() {
         if (!res.ok) throw new Error("Failed to fetch order");
         const data = await res.json();
 
-        setOrder(data);
+        // Ensure items is always an array
+        const normalizedData = {
+          ...data,
+          items: Array.isArray(data.items)
+            ? data.items
+            : JSON.parse(data.items || "[]"),
+        };
 
-        if (data.status === "paid") {
+        setOrder(normalizedData);
+
+        if (normalizedData.status === "paid") {
           clearInterval(interval);
           clearCart();
           setStatus("success");
-        } else if (data.status === "failed") {
+        } else if (normalizedData.status === "failed") {
           clearInterval(interval);
           setStatus("failed");
         }
@@ -39,7 +45,7 @@ export default function CheckoutSuccess() {
     }, 3000); // check every 3s
 
     return () => clearInterval(interval);
-  }, [searchParams, clearCart]);
+  }, [orderId, clearCart]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 p-4 text-center">
@@ -61,8 +67,8 @@ export default function CheckoutSuccess() {
             <div className="mt-4 w-full max-w-lg border rounded-lg p-4">
               <h2 className="text-lg font-semibold mb-2">Your Order:</h2>
               <ul className="space-y-2">
-                {order.items.map((item) => (
-                  <li key={item.id} className="flex justify-between">
+                {order.items.map((item, idx) => (
+                  <li key={item.id || idx} className="flex justify-between">
                     <span>
                       {item.name} x {item.quantity}
                     </span>
