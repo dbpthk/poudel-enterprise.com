@@ -21,7 +21,7 @@ export async function POST(request) {
       .values({
         userId,
         amount,
-        items: cartItems, // store as JSON
+        items: JSON.stringify(cartItems),
         status: "pending",
         customerName,
         deliveryInfo, // store as JSON

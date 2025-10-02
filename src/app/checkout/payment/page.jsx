@@ -49,11 +49,11 @@ const CheckoutPaymentForm = ({ clientSecret, orderId }) => {
 
     if (error) setErrorMessage(error.message);
     else if (paymentIntent?.status === "succeeded") {
-      clearCart(); // clear cart after success
       window.location.href = `/checkout/payment/success?orderId=${orderId}`;
     } else {
       setErrorMessage("Payment could not be completed. Please try again.");
     }
+    clearCart(); // clear cart after success
 
     setLoading(false);
   };

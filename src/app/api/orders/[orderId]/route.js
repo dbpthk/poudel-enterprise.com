@@ -27,7 +27,10 @@ export async function GET(req, { params }) {
     let items = [];
     if (order.items) {
       try {
-        items = JSON.parse(order.items);
+        items =
+          typeof order.items === "string"
+            ? JSON.parse(order.items)
+            : order.items;
       } catch (e) {
         console.warn(`⚠️ Failed to parse items for order ${order.id}:`, e);
       }

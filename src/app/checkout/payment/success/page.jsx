@@ -1,12 +1,13 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useShopContext } from "../../../_context/ShopContext";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
-export default function CheckoutSuccess({ searchParams }) {
-  const params = use(searchParams);
-  const orderId = params?.orderId;
+export default function CheckoutSuccess({}) {
+  const searchParams = useSearchParams(); // ✅ client-safe
+  const orderId = searchParams.get("orderId"); // get the param
   const { clearCart } = useShopContext();
   const [status, setStatus] = useState("processing"); // processing | success | failed
   const [order, setOrder] = useState(null);
@@ -20,21 +21,12 @@ export default function CheckoutSuccess({ searchParams }) {
         if (!res.ok) throw new Error("Failed to fetch order");
         const data = await res.json();
 
-        // Ensure items is always an array
-        const normalizedData = {
-          ...data,
-          items: Array.isArray(data.items)
-            ? data.items
-            : JSON.parse(data.items || "[]"),
-        };
-
-        setOrder(normalizedData);
-
-        if (normalizedData.status === "paid") {
+        setOrder(data); // store fetched order
+        if (data.status === "paid") {
           clearInterval(interval);
           clearCart();
           setStatus("success");
-        } else if (normalizedData.status === "failed") {
+        } else if (data.status === "failed") {
           clearInterval(interval);
           setStatus("failed");
         }
@@ -43,10 +35,11 @@ export default function CheckoutSuccess({ searchParams }) {
         clearInterval(interval);
         setStatus("failed");
       }
-    }, 3000); // check every 3s
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [orderId, clearCart]);
+  console.log("order", order);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 p-4 text-center">
@@ -64,7 +57,7 @@ export default function CheckoutSuccess({ searchParams }) {
           </h1>
           <p className="text-gray-700 mt-2">Thank you for your order!</p>
 
-          {order.items && order.items.length > 0 && (
+          {order.items?.length > 0 && (
             <div className="mt-4 w-full max-w-lg border rounded-lg p-4">
               <h2 className="text-lg font-semibold mb-2">Your Order:</h2>
               <ul className="space-y-2">
