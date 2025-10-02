@@ -26,9 +26,11 @@ export const products = pgTable("products", {
 export const orders = pgTable("orders", {
   id: serial("id").primaryKey(),
   userId: text("user_id").notNull(),
-  items: json("items").notNull(), // store array of cart items
+  customerName: text("customer_name").default(""), // optional: useful for admin display
+  items: json("items").notNull(), // array of cart items
   amount: integer("amount").notNull(), // total order amount
   status: text("status").default("pending"), // pending / paid / failed
-  stripeId: text("stripe_id"),
+  stripeId: text("stripe_id").default(""),
+  deliveryInfo: json("delivery_info").default({}), // JSON object for address
   createdAt: timestamp("created_at").defaultNow(),
 });

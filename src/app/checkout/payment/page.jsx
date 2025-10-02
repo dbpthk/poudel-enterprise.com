@@ -14,7 +14,7 @@ import Cart from "../_checkoutComponent/Cart";
 import DeliveryDetails from "../_checkoutComponent/DeliveryDetails";
 import convertToCents from "../../../lib/convertToCents";
 import { usePathname } from "next/navigation";
-import { useUser, SignInButton } from "@clerk/nextjs"; // ✅ get Clerk user
+import { useUser, SignInButton } from "@clerk/nextjs";
 import { useRouter } from "next/navigation";
 
 const stripePromise = loadStripe(
@@ -47,11 +47,9 @@ const CheckoutPaymentForm = ({ clientSecret, orderId }) => {
       redirect: "if_required",
     });
 
-    if (error) {
-      setErrorMessage(error.message);
-    } else if (paymentIntent && paymentIntent.status === "succeeded") {
-      // optional: you can clear cart immediately here if you want
-      clearCart();
+    if (error) setErrorMessage(error.message);
+    else if (paymentIntent?.status === "succeeded") {
+      clearCart(); // clear cart after success
       window.location.href = `/checkout/payment/success?orderId=${orderId}`;
     } else {
       setErrorMessage("Payment could not be completed. Please try again.");
@@ -68,7 +66,6 @@ const CheckoutPaymentForm = ({ clientSecret, orderId }) => {
       ) : (
         <p>Loading Payment Method ....</p>
       )}
-
       {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
       <button
         type="submit"
@@ -87,15 +84,26 @@ const CheckoutPaymentForm = ({ clientSecret, orderId }) => {
 
 const Payment = () => {
   const [clientSecret, setClientSecret] = useState(null);
-  const [orderId, setOrderId] = useState(null); // ✅ store orderId
-  const { paymentAmount, cartItems } = useShopContext();
-  const { user, isSignedIn } = useUser();
+  const [orderId, setOrderId] = useState(null);
+  const { paymentAmount, cartItems, userDetails } = useShopContext();
+  const { user } = useUser();
   const path = usePathname();
-  const router = useRouter();
+  const [redirectUrl, setRedirectUrl] = useState("/checkout");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setRedirectUrl(window.location.href);
+    }
+  }, []);
 
   useEffect(() => {
     const createPaymentIntent = async () => {
       if (!user) return;
+
+      // combine first+last name for customerName
+      const customerName = `${userDetails?.fname || ""} ${
+        userDetails?.lname || ""
+      }`.trim();
 
       const res = await fetch("/api/create-payment-intent", {
         method: "POST",
@@ -104,35 +112,40 @@ const Payment = () => {
           amount: convertToCents(paymentAmount),
           cartItems,
           userId: user.id,
+          customerName,
+          deliveryInfo: userDetails, // pass as JSON
         }),
       });
 
       const data = await res.json();
       setClientSecret(data.clientSecret);
-      setOrderId(data.orderId); // ✅ get orderId from backend
+      setOrderId(data.orderId);
     };
 
     createPaymentIntent();
-  }, [paymentAmount, cartItems, user]);
+  }, [paymentAmount, cartItems, user, userDetails]);
+
+  if (!user)
+    return (
+      <div className="flex flex-col items-center justify-center h-[70vh] text-center px-4">
+        <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+          You must be signed in to proceed to checkout
+        </h2>
+        <p className="text-gray-600 mb-6">
+          Please sign in to continue with your payment.
+        </p>
+        <SignInButton mode="page" redirecturl={redirectUrl}>
+          <button className="px-6 py-2 bg-black text-white rounded-lg shadow hover:bg-gray-800 transition cursor-pointer">
+            Sign In
+          </button>
+        </SignInButton>
+      </div>
+    );
 
   return (
     <div className="max-w-6xl mx-auto p-4 mb-30 min-h-[300px]">
       <CartNav path={path} />
-      {!user ? (
-        <div className="flex flex-col items-center justify-center h-[70vh] text-center px-4">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-            You must be signed in to proceed to checkout
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Please sign in to continue with your payment.
-          </p>
-          <SignInButton mode="page" redirecturl={window.location.href}>
-            <button className="px-6 py-2 bg-black text-white rounded-lg shadow hover:bg-gray-800 transition cursor-pointer">
-              Sign In
-            </button>
-          </SignInButton>
-        </div>
-      ) : clientSecret && orderId ? (
+      {clientSecret && orderId ? (
         <Elements
           stripe={stripePromise}
           options={{ clientSecret, appearance: { theme: "stripe" } }}

@@ -1,0 +1,1 @@
+ALTER TABLE "orders" RENAME COLUMN "delivery" TO "delivery_info";

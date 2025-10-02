@@ -8,16 +8,23 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export async function POST(request) {
   try {
-    const { amount, cartItems, userId } = await request.json();
+    const { amount, cartItems, userId, deliveryInfo } = await request.json();
 
-    // 1️⃣ Create order in DB (status = pending)
+    // construct customerName
+    const customerName = `${deliveryInfo.fname || ""} ${
+      deliveryInfo.lname || ""
+    }`.trim();
+
+    // 1️⃣ Create order in DB (status = pending) with delivery info
     const [newOrder] = await db
       .insert(orders)
       .values({
         userId,
         amount,
-        items: JSON.stringify(cartItems),
+        items: cartItems, // store as JSON
         status: "pending",
+        customerName,
+        deliveryInfo, // store as JSON
       })
       .returning();
 
@@ -28,7 +35,7 @@ export async function POST(request) {
       amount,
       currency: "AUD",
       automatic_payment_methods: { enabled: true },
-      metadata: { orderId: newOrder.id },
+      metadata: { orderId },
     });
 
     // 3️⃣ Update order with stripeId
@@ -37,7 +44,7 @@ export async function POST(request) {
       .set({ stripeId: paymentIntent.id })
       .where(eq(orders.id, orderId));
 
-    // 4️⃣ Send clientSecret to frontend
+    // 4️⃣ Return clientSecret and orderId to frontend
     return NextResponse.json({
       clientSecret: paymentIntent.client_secret,
       orderId,

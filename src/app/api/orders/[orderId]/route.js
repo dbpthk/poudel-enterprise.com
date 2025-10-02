@@ -1,8 +1,13 @@
+"use server"; // ensure this runs server-side
+
 import { db } from "../../../../lib/db";
 import { orders } from "../../../../lib/schema";
 import { eq } from "drizzle-orm";
+// import * as React from "react";
 
 export async function GET(req, { params }) {
+  // unwrap params correctly
+  // const { orderId } = await React.use(params);
   const { orderId } = params;
 
   try {
@@ -18,10 +23,19 @@ export async function GET(req, { params }) {
       });
     }
 
-    // parse items before sending
+    // safe parse items
+    let items = [];
+    if (order.items) {
+      try {
+        items = JSON.parse(order.items);
+      } catch (e) {
+        console.warn(`⚠️ Failed to parse items for order ${order.id}:`, e);
+      }
+    }
+
     const parsedOrder = {
       ...order,
-      items: JSON.parse(order.items), // ✅ convert string to array
+      items,
     };
 
     return new Response(JSON.stringify(parsedOrder), {
@@ -29,7 +43,7 @@ export async function GET(req, { params }) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (err) {
-    console.error(err);
+    console.error("❌ GET /api/orders/[orderId] error:", err);
     return new Response(JSON.stringify({ error: err.message }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

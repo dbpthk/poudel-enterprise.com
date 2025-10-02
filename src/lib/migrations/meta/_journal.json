@@ -29,6 +29,27 @@
       "when": 1759141338551,
       "tag": "0003_common_umar",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1759309041466,
+      "tag": "0004_unknown_hitman",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1759310084758,
+      "tag": "0005_stale_toro",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1759310720186,
+      "tag": "0006_cynical_black_crow",
+      "breakpoints": true
     }
   ]
 }

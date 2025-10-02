@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { useShopContext } from "../../../_context/ShopContext";
 import Link from "next/link";
 
 export default function CheckoutSuccess({ searchParams }) {
-  const orderId = searchParams?.orderId;
+  const params = use(searchParams);
+  const orderId = params?.orderId;
   const { clearCart } = useShopContext();
   const [status, setStatus] = useState("processing"); // processing | success | failed
   const [order, setOrder] = useState(null);
