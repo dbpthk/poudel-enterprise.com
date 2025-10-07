@@ -15,29 +15,38 @@ export default function CheckoutSuccess({}) {
   useEffect(() => {
     if (!orderId) return;
 
-    const interval = setInterval(async () => {
+    let isMounted = true;
+
+    const pollOrder = async () => {
       try {
         const res = await fetch(`/api/orders/${orderId}`);
         if (!res.ok) throw new Error("Failed to fetch order");
         const data = await res.json();
 
-        setOrder(data); // store fetched order
+        if (!isMounted) return;
+        setOrder(data);
+
         if (data.status === "paid") {
-          clearInterval(interval);
           clearCart();
           setStatus("success");
         } else if (data.status === "failed") {
-          clearInterval(interval);
           setStatus("failed");
+        } else {
+          // retry after 3s if still processing
+          setTimeout(pollOrder, 3000);
         }
       } catch (err) {
         console.error(err);
-        clearInterval(interval);
+        if (!isMounted) return;
         setStatus("failed");
       }
-    }, 3000);
+    };
 
-    return () => clearInterval(interval);
+    pollOrder();
+
+    return () => {
+      isMounted = false;
+    };
   }, [orderId, clearCart]);
 
   return (
@@ -45,6 +54,9 @@ export default function CheckoutSuccess({}) {
       {status === "processing" && (
         <>
           <p className="text-gray-700 text-lg">Payment is processing...</p>
+          <div className="mt-2">
+            <div className="loader border-t-4 border-b-4 border-gray-300 rounded-full w-10 h-10 animate-spin mx-auto"></div>
+          </div>
           <p className="text-gray-500 text-sm">Please do not close this tab.</p>
         </>
       )}

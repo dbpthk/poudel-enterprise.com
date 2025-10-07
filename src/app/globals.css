@@ -175,3 +175,8 @@ input[type="checkbox"]:checked {
   transform: translateY(-10px);
   transition: opacity 300ms, transform 300ms;
 }
+
+.loader {
+  border-top-color: #4ade80; /* green */
+  border-bottom-color: #4ade80;
+}
