@@ -4,7 +4,7 @@ const isProtectedRoute = createRouteMatcher(["/orders(.*)", "/admin(.*)"]);
 
 export default clerkMiddleware((auth, req) => {
   if (isProtectedRoute(req)) {
-    auth().protect({
+    auth.protect({
       signInUrl: "/sign-in", // 👈 lowercase 's'
     });
   }

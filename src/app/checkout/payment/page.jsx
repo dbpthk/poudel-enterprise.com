@@ -86,7 +86,8 @@ const Payment = () => {
   const [clientSecret, setClientSecret] = useState(null);
   const [orderId, setOrderId] = useState(null);
   const { paymentAmount, cartItems, userDetails } = useShopContext();
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
+  const [isLoading, setIsLoading] = useState(false);
   const path = usePathname();
   const [redirectUrl, setRedirectUrl] = useState("/checkout");
 
@@ -98,7 +99,7 @@ const Payment = () => {
 
   useEffect(() => {
     const createPaymentIntent = async () => {
-      if (!user) return;
+      if (!user || !isLoaded) return;
 
       // combine first+last name for customerName
       const customerName = `${userDetails?.fname || ""} ${
@@ -124,6 +125,15 @@ const Payment = () => {
 
     createPaymentIntent();
   }, [paymentAmount, cartItems, user, userDetails]);
+
+  // Show loading while checking user state
+  if (!isLoaded) {
+    return (
+      <div className="flex justify-center items-center h-[70vh]">
+        <p>Loading...</p>
+      </div>
+    );
+  }
 
   if (!user)
     return (

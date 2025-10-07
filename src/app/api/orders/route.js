@@ -31,21 +31,14 @@ export async function GET() {
         .orderBy(orders.id);
     }
 
-    // Safe JSON parse for items
-    data = data.map((d) => {
-      let items = [];
-      if (d.items) {
-        try {
-          items = JSON.parse(d.items);
-        } catch (e) {
-          console.warn(`⚠️ Failed to parse items for order ${d.id}:`, e);
-          items = [];
-        }
-      }
-      return { ...d, items };
-    });
+    // ✅ since Drizzle returns proper JSON, no need to parse
+    data = data.map((d) => ({
+      ...d,
+      items: d.items || [], // keep safe fallback
+    }));
 
     console.log("✅ Fetched orders:", data.length);
+    console.log("🧠 Sample order:", data[0]);
 
     return new Response(JSON.stringify(data), {
       status: 200,

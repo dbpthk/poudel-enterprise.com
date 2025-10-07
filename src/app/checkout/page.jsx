@@ -2,10 +2,11 @@
 import Link from "next/link";
 import { useShopContext } from "../_context/ShopContext";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Cart from "./_checkoutComponent/Cart";
 import CartNav from "./_checkoutComponent/CartNav";
 import { toast } from "sonner";
+import { useUser } from "@clerk/nextjs";
 
 const Checkout = () => {
   const { cartItems, userDetails, setUserDetails, isLoading } =
@@ -21,8 +22,30 @@ const Checkout = () => {
   const [country, setCountry] = useState(userDetails?.country || "");
   const [phone, setPhone] = useState(userDetails?.phone || "");
   const [email, setEmail] = useState(userDetails?.email || "");
+  const { user, isLoaded } = useUser();
 
   const path = usePathname();
+
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    // Prefill from Clerk if available
+    const clerkFname = user?.firstName || "";
+    const clerkLname = user?.lastName || "";
+    const clerkEmail =
+      user?.emailAddresses?.[0]?.emailAddress || user?.email || "";
+
+    setFname(clerkFname || "");
+    setLname(clerkLname || "");
+    setEmail(clerkEmail || "");
+
+    setAddress("");
+    setCity("");
+    setState("");
+    setZip("");
+    setCountry("");
+    setPhone("");
+  }, [isLoaded, user]);
 
   if (isLoading) {
     return (

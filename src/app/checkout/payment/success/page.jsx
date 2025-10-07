@@ -39,7 +39,6 @@ export default function CheckoutSuccess({}) {
 
     return () => clearInterval(interval);
   }, [orderId, clearCart]);
-  console.log("order", order);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 p-4 text-center">
@@ -59,12 +58,17 @@ export default function CheckoutSuccess({}) {
 
           {order.items?.length > 0 && (
             <div className="mt-4 w-full max-w-lg border rounded-lg p-4">
-              <h2 className="text-lg font-semibold mb-2">Your Order:</h2>
+              <h2 className="text-lg font-semibold mb-2">
+                Your Order: #{orderId}
+              </h2>
               <ul className="space-y-2">
-                {order.items.map((item, idx) => (
-                  <li key={item.id || idx} className="flex justify-between">
+                {order.items.map((item) => (
+                  <li
+                    key={item.id && item.size}
+                    className="flex justify-between"
+                  >
                     <span>
-                      {item.name} x {item.quantity}
+                      {item.name} x {item.quantity} <span>{item.size}</span>
                     </span>
                     <span>${(item.price * item.quantity).toFixed(2)}</span>
                   </li>

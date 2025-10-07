@@ -3,14 +3,12 @@
 import { db } from "../../../../lib/db";
 import { orders } from "../../../../lib/schema";
 import { eq } from "drizzle-orm";
-// import * as React from "react";
 
-export async function GET(req, { params }) {
-  // unwrap params correctly
-  // const { orderId } = await React.use(params);
-  const { orderId } = params;
+export async function GET(req, context) {
+  const { orderId } = await context.params; // fix: await params
 
   try {
+    // Fetch the order by ID
     const [order] = await db
       .select()
       .from(orders)
@@ -23,7 +21,7 @@ export async function GET(req, { params }) {
       });
     }
 
-    // safe parse items
+    // Safely parse items (in case stored as JSON string)
     let items = [];
     if (order.items) {
       try {
