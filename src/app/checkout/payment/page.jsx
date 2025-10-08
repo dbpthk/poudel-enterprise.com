@@ -14,8 +14,7 @@ import Cart from "../_checkoutComponent/Cart";
 import DeliveryDetails from "../_checkoutComponent/DeliveryDetails";
 import convertToCents from "../../../lib/convertToCents";
 import { usePathname } from "next/navigation";
-import { useUser, SignInButton } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
+import { useUser, SignInButton, SignUpButton } from "@clerk/nextjs";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
@@ -76,7 +75,11 @@ const CheckoutPaymentForm = ({ clientSecret, orderId }) => {
             : "bg-gradient-hero text-white hover:bg-gradient-footer cursor-pointer"
         }`}
       >
-        {loading ? "Processing..." : `Pay ${currency}${paymentAmount}`}
+        {loading
+          ? "Processing..."
+          : paymentAmount
+          ? `Pay ${currency}${paymentAmount}`
+          : "Processing..."}
       </button>
     </form>
   );
@@ -144,11 +147,19 @@ const Payment = () => {
         <p className="text-gray-600 mb-6">
           Please sign in to continue with your payment.
         </p>
-        <SignInButton mode="page" redirecturl={redirectUrl}>
-          <button className="px-6 py-2 bg-black text-white rounded-lg shadow hover:bg-gray-800 transition cursor-pointer">
-            Sign In
-          </button>
-        </SignInButton>
+        <div className="flex gap-3 items-center">
+          <SignInButton mode="page" redirecturl={redirectUrl}>
+            <button className="px-6 py-2 bg-gray-800 text-white rounded-lg shadow hover:bg-gray-800 transition cursor-pointer">
+              Sign In
+            </button>
+          </SignInButton>
+          <p>Or</p>
+          <SignUpButton mode="page" redirecturl={redirectUrl}>
+            <button className="px-6 py-2 bg-gray-800 text-white rounded-lg shadow hover:bg-gray-800 transition cursor-pointer">
+              Sign Up
+            </button>
+          </SignUpButton>
+        </div>
       </div>
     );
 

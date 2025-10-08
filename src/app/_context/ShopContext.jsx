@@ -135,14 +135,16 @@ export const ShopProvider = ({ children, initialProducts = [] }) => {
     [cartItems]
   );
 
-  const clearCart = () => {
+  const clearCart = useCallback(() => {
     setCartItems([]);
-  };
+  }, []);
 
   const paymentAmount = useMemo(() => {
     const total = getCartTotal();
     if (total > 0) {
       return total > 200 ? total : total + 20;
+    } else {
+      return 0;
     }
   }, [getCartTotal]);
 

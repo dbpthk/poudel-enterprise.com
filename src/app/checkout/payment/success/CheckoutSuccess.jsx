@@ -1,53 +1,62 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useShopContext } from "../../../_context/ShopContext";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
-export default function CheckoutSuccess({}) {
-  const searchParams = useSearchParams(); // ✅ client-safe
-  const orderId = searchParams.get("orderId"); // get the param
+export default function CheckoutSuccess() {
+  const searchParams = useSearchParams();
+  const orderId = searchParams.get("orderId");
+
   const { clearCart } = useShopContext();
-  const [status, setStatus] = useState("processing"); // processing | success | failed
+
+  const [status, setStatus] = useState("processing"); // "processing" | "success" | "failed"
   const [order, setOrder] = useState(null);
+
+  const timeoutRef = useRef(null);
 
   useEffect(() => {
     if (!orderId) return;
 
     let isMounted = true;
 
-    const pollOrder = async () => {
+    const fetchOrder = async () => {
       try {
         const res = await fetch(`/api/orders/${orderId}`);
         if (!res.ok) throw new Error("Failed to fetch order");
-        const data = await res.json();
 
+        const data = await res.json();
         if (!isMounted) return;
+
         setOrder(data);
 
         if (data.status === "paid") {
-          clearCart();
           setStatus("success");
-        } else if (data.status === "failed") {
-          setStatus("failed");
-        } else {
-          // retry after 3s if still processing
-          setTimeout(pollOrder, 3000);
+          clearCart();
+          return;
         }
+
+        if (data.status === "failed") {
+          setStatus("failed");
+          return;
+        }
+
+        // schedule next poll
+        timeoutRef.current = setTimeout(fetchOrder, 3000);
       } catch (err) {
-        console.error(err);
-        if (!isMounted) return;
-        setStatus("failed");
+        console.error("Error fetching order:", err);
+        if (isMounted) setStatus("failed");
       }
     };
 
-    pollOrder();
+    fetchOrder();
 
     return () => {
       isMounted = false;
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
-  }, [orderId, clearCart]);
+  }, [orderId]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 p-4 text-center">
@@ -64,7 +73,7 @@ export default function CheckoutSuccess({}) {
       {status === "success" && order && (
         <>
           <h1 className="text-2xl font-bold text-green-600">
-            Payment of ${(order.amount / 100).toFixed(2)} AUD is Successful 🎉
+            Payment of ${(order.amount / 100).toFixed(2)} AUD Successful 🎉
           </h1>
           <p className="text-gray-700 mt-2">Thank you for your order!</p>
 
@@ -74,9 +83,9 @@ export default function CheckoutSuccess({}) {
                 Your Order: #{orderId}
               </h2>
               <ul className="space-y-2">
-                {order.items.map((item) => (
+                {order.items.map((item, index) => (
                   <li
-                    key={item.id && item.size}
+                    key={`${item.id}-${item.size}-${index}`}
                     className="flex justify-between"
                   >
                     <span>
