@@ -148,8 +148,6 @@ export const ShopProvider = ({ children, initialProducts = [] }) => {
     }
   }, [getCartTotal]);
 
-  console.log("pay this", paymentAmount);
-
   // ---------------- IMAGE HELPERS ----------------
   const handleImageError = (imagePath) => {
     setImageErrors((prev) => ({ ...prev, [imagePath]: true }));

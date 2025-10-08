@@ -43,7 +43,7 @@ export default function RootLayout({ children }) {
           <FetchProducts>
             <NavBar />
             {children}
-            <Toaster richColors position="top-right" />
+            <Toaster richColors expand position="top-right" />
             <Footer />
             <ScrollToTopButton />
           </FetchProducts>

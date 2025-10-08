@@ -15,6 +15,7 @@ import DeliveryDetails from "../_checkoutComponent/DeliveryDetails";
 import convertToCents from "../../../lib/convertToCents";
 import { usePathname } from "next/navigation";
 import { useUser, SignInButton, SignUpButton } from "@clerk/nextjs";
+import { toast } from "sonner";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
@@ -29,59 +30,92 @@ const CheckoutPaymentForm = ({ clientSecret, orderId }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setErrorMessage(null);
 
     if (!stripe || !elements) {
-      setErrorMessage("Stripe.js has not loaded yet.");
+      toast.error("Stripe.js has not loaded yet.");
+      return;
+    }
+
+    setLoading(true);
+
+    // 🧠 Trigger Stripe validation manually
+    const { error: submitError } = await elements.submit();
+
+    if (submitError) {
+      // This captures validation issues like incomplete card form
+      toast.error(
+        submitError.message || "Please complete your payment details."
+      );
       setLoading(false);
       return;
     }
 
-    const { error, paymentIntent } = await stripe.confirmPayment({
-      elements,
-      confirmParams: {
-        return_url: `${window.location.origin}/checkout/payment/success?orderId=${orderId}`,
-      },
-      redirect: "if_required",
-    });
+    try {
+      const paymentEl = elements.getElement(PaymentElement);
+      if (!paymentEl) {
+        toast.error("Payment form is not ready.");
+        setLoading(false);
+        return;
+      }
 
-    if (error) setErrorMessage(error.message);
-    else if (paymentIntent?.status === "succeeded") {
-      window.location.href = `/checkout/payment/success?orderId=${orderId}`;
-    } else {
-      setErrorMessage("Payment could not be completed. Please try again.");
+      const { error, paymentIntent } = await stripe.confirmPayment({
+        elements,
+        confirmParams: {
+          return_url: `${window.location.origin}/checkout/payment/success?orderId=${orderId}`,
+        },
+        redirect: "if_required",
+      });
+
+      if (error) {
+        toast.error(error.message || "Payment failed. Please try again.");
+      } else if (paymentIntent?.status === "succeeded") {
+        clearCart(); // ✅ clear only on success
+        window.location.href = `/checkout/payment/success?orderId=${orderId}`;
+      } else {
+        toast.error("Payment could not be completed. Please try again.");
+      }
+    } catch (err) {
+      console.error("Error during payment:", err);
+      toast.error("Unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
-    clearCart(); // clear cart after success
-
-    setLoading(false);
   };
 
+  console.log("error", errorMessage);
+
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+    <div className="flex flex-col gap-6">
       <DeliveryDetails />
-      {clientSecret && stripe && elements ? (
-        <PaymentElement />
-      ) : (
-        <p>Loading Payment Method ....</p>
-      )}
-      {errorMessage && <p className="text-red-500 text-sm">{errorMessage}</p>}
-      <button
-        type="submit"
-        disabled={!stripe || !elements || loading || !clientSecret}
-        className={`w-full py-3 rounded-lg font-medium transition-all duration-300 active:scale-95 ${
-          !stripe || loading
-            ? "bg-gray-300 text-gray-500 cursor-not-allowed"
-            : "bg-gradient-hero text-white hover:bg-gradient-footer cursor-pointer"
-        }`}
-      >
-        {loading
-          ? "Processing..."
-          : paymentAmount
-          ? `Pay ${currency}${paymentAmount}`
-          : "Processing..."}
-      </button>
-    </form>
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        {clientSecret && stripe && elements ? (
+          <PaymentElement />
+        ) : (
+          <p>Loading Payment Method ....</p>
+        )}
+        <div className="flex">
+          {errorMessage ? (
+            <p className="text-red-500 text-sm">{errorMessage}</p>
+          ) : null}
+        </div>
+
+        <button
+          type="submit"
+          disabled={!stripe || !elements || loading || !clientSecret}
+          className={`w-full py-3 rounded-lg font-medium transition-all duration-300 active:scale-95 ${
+            !stripe || loading
+              ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+              : "bg-gradient-hero text-white hover:bg-gradient-footer cursor-pointer"
+          }`}
+        >
+          {loading
+            ? "Processing..."
+            : paymentAmount
+            ? `Pay ${currency}${paymentAmount}`
+            : "Processing..."}
+        </button>
+      </form>
+    </div>
   );
 };
 
@@ -127,7 +161,7 @@ const Payment = () => {
     };
 
     createPaymentIntent();
-  }, [paymentAmount, cartItems, user, userDetails]);
+  }, [isLoaded, paymentAmount, cartItems, user, userDetails]);
 
   // Show loading while checking user state
   if (!isLoaded) {
@@ -148,13 +182,13 @@ const Payment = () => {
           Please sign in to continue with your payment.
         </p>
         <div className="flex gap-3 items-center">
-          <SignInButton mode="page" redirecturl={redirectUrl}>
+          <SignInButton mode="page" redirectUrl={redirectUrl}>
             <button className="px-6 py-2 bg-gray-800 text-white rounded-lg shadow hover:bg-gray-800 transition cursor-pointer">
               Sign In
             </button>
           </SignInButton>
           <p>Or</p>
-          <SignUpButton mode="page" redirecturl={redirectUrl}>
+          <SignUpButton mode="page" redirectUrl={redirectUrl}>
             <button className="px-6 py-2 bg-gray-800 text-white rounded-lg shadow hover:bg-gray-800 transition cursor-pointer">
               Sign Up
             </button>
