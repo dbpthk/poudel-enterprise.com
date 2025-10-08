@@ -122,8 +122,6 @@ const Checkout = () => {
 
     // Navigate to payment page
     window.location.href = "/checkout/payment";
-
-    console.log("User Details set in context:", details);
   };
 
   return (

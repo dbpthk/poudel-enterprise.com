@@ -28,7 +28,6 @@ const Product = () => {
       setImage(foundProduct.images[0]); // first image
     }
   }, [products, productId]);
-  console.log(productData);
 
   if (!productData) {
     return (
