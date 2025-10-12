@@ -4,7 +4,6 @@ import NavBar from "./_components/NavBar";
 import { Toaster } from "sonner";
 import Footer from "./_components/Footer";
 import ScrollToTopButton from "./_components/ScrollToTopButton";
-import Provider from "./Provider";
 import { NextSSRPlugin } from "@uploadthing/react/next-ssr-plugin";
 import { extractRouterConfig } from "uploadthing/server";
 import ourFileRouter from "./_config/uploadthing";
@@ -38,16 +37,14 @@ export default function RootLayout({ children }) {
       <body
         className={`scrollSmooth ${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Provider>
-          <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
-          <FetchProducts>
-            <NavBar />
-            {children}
-            <Toaster richColors expand position="top-right" />
-            <Footer />
-            <ScrollToTopButton />
-          </FetchProducts>
-        </Provider>
+        <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
+        <FetchProducts>
+          <NavBar />
+          {children}
+          <Toaster richColors expand position="top-right" />
+          <Footer />
+          <ScrollToTopButton />
+        </FetchProducts>
       </body>
     </html>
   );

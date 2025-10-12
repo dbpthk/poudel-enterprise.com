@@ -321,7 +321,6 @@ export default function AdminPage() {
                 name="bestseller"
                 checked={formData.bestseller}
                 onChange={handleChange}
-                required
                 disabled={!isAdmin}
               />
               Bestseller

@@ -1,11 +1,19 @@
 // src/app/_components/FetchProducts.jsx
 import { db } from "../../lib/db";
 import { products } from "../../lib/schema";
-import { ShopProvider } from "../_context/ShopContext";
+import Provider from "./../Provider.jsx";
+import { desc } from "drizzle-orm";
 
 export default async function FetchProducts({ children }) {
-  // server-side fetch
-  const allProducts = await db.select().from(products);
+  const fetchedProducts = await db
+    .select()
+    .from(products)
+    .orderBy(desc(products.date));
 
-  return <ShopProvider initialProducts={allProducts}>{children}</ShopProvider>;
+  const serializedProducts = fetchedProducts.map((p) => ({
+    ...p,
+    date: p.date?.toISOString(),
+  }));
+
+  return <Provider initialProducts={serializedProducts}>{children}</Provider>;
 }
