@@ -72,7 +72,7 @@ export default function OrdersPage() {
   if (error) return <p className="text-red-500 min-h-[150px]">{error}</p>;
 
   return (
-    <div className="max-w-6xl mx-auto p-6">
+    <div className="max-w-6xl  mx-auto p-10 overflow-y-hidden">
       <h1 className="text-3xl font-bold mb-6">
         {user.publicMetadata.role === "admin" ? "All Orders" : "Your Orders"}
       </h1>
@@ -103,7 +103,7 @@ export default function OrdersPage() {
             : "You have no past orders."}
         </p>
       ) : (
-        <div className="grid gap-6">
+        <div className="flex flex-col gap-6">
           {visibleOrders.map((order) => {
             const isExpanded = expanded === order.id;
             return (
@@ -117,7 +117,7 @@ export default function OrdersPage() {
                   onClick={() => setExpanded(isExpanded ? null : order.id)}
                 >
                   <div>
-                    <p className="font-semibold">
+                    <p className="text-sm sm:text-lg font-semibold">
                       Order #{order.id}{" "}
                       {user.publicMetadata.role === "admin" &&
                         `(User: ${order.customerName || order.userId})`}
@@ -129,9 +129,9 @@ export default function OrdersPage() {
 
                   {/* Status badge */}
                   {user.publicMetadata.role === "admin" ? (
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center ">
                       <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        className={` px-3 py-1 rounded-full text-[12px] font-medium ${
                           order.status === "paid"
                             ? "bg-green-100 text-green-800"
                             : order.status === "pending"
@@ -144,8 +144,8 @@ export default function OrdersPage() {
                       {isExpanded ? <ChevronUp /> : <ChevronDown />}
                     </div>
                   ) : order.status === "paid" ? (
-                    <div className="flex items-center gap-4">
-                      <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                    <div className="flex items-center ">
+                      <span className="px-3 py-1 rounded-full text-[12px] font-medium bg-green-100 text-green-800">
                         {order.status.toUpperCase()}
                       </span>
                       {isExpanded ? <ChevronUp /> : <ChevronDown />}
@@ -160,7 +160,7 @@ export default function OrdersPage() {
                       {order.items.map((item) => (
                         <li
                           key={`${item.id}-${item.size}`}
-                          className="flex justify-between"
+                          className="flex justify-between text-sm sm:text-md"
                         >
                           <span>
                             {item.name} x {item.quantity}
