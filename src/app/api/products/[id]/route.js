@@ -19,6 +19,9 @@ export async function PUT(req, { params }) {
   try {
     const body = await req.json();
 
+    console.log("PUT body:", body);
+    console.log("params.id:", params.id);
+
     if (body.editPassword?.trim() !== process.env.ADMIN_DELETE_PASS?.trim()) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,

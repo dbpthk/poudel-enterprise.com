@@ -119,6 +119,7 @@ export default function AdminPage() {
       editPassword: password, // send password for backend verification
     };
 
+    console.log(url);
     try {
       const res = await fetch(url, {
         method,
@@ -221,7 +222,6 @@ export default function AdminPage() {
                   multiple
                   onChange={handleImageUpload}
                   className="hidden"
-                  required
                   disabled={!isAdmin}
                 />
               </label>
