@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 // src/app/_components/FetchProducts.jsx
 import { db } from "../../lib/db";
 import { products } from "../../lib/schema";
