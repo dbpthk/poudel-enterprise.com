@@ -1,36 +1,49 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# 🛍️ Poudel Enterprise
 
-## Getting Started
+A modern, scalable **e-commerce web application** built with **Next.js App Router**.  
+Designed with performance, responsiveness, and clean UI architecture in mind.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## 🚀 Live Demo
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+👉 https://poudel-enterprise-com.vercel.app/
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📌 Overview
 
-## Learn More
+**Poudel Enterprise** is a full-featured e-commerce frontend architecture built using the latest **Next.js App Router** structure.
 
-To learn more about Next.js, take a look at the following resources:
+This project demonstrates:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Responsive layout architecture
+- Clean component structure
+- Scalable routing system
+- Modern UI design principles
+- Mobile-first development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+It showcases best practices for building a production-ready online store interface.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## ✨ Features
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- 🧭 Responsive Navigation Bar
+- 📱 Mobile-friendly Sidebar Menu
+- 🛒 Product Collection Pages
+- 🔐 User Authentication
+- ⚡ Smooth Client-Side Interactivity
+- 🎨 Modern UI built with Tailwind CSS
+- 📦 Organized App Router structure
+
+---
+
+## 🛠️ Tech Stack
+
+- **Framework:** Next.js (App Router)
+- **Styling:** Tailwind CSS
+- **Icons:** Lucide React
+- **Authentication:** Clerk
+- **State Management:** React Hooks and Context API
+- **Deployment:** (Vercel )

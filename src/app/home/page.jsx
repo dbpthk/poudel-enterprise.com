@@ -23,7 +23,7 @@ const Home = () => {
             priority
             className="object-cover w-full h-full opacity-50"
             onError={() => handleImageError("/hero_img.png")}
-            onLoadingComplete={() => handleImageLoad("/hero_img.png")}
+            onLoad={() => handleImageLoad("/hero_img.png")}
           />
         </div>
 
