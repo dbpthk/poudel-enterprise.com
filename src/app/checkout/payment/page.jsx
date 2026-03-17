@@ -82,8 +82,6 @@ const CheckoutPaymentForm = ({ clientSecret, orderId }) => {
     }
   };
 
-  console.log("error", errorMessage);
-
   return (
     <div className="flex flex-col gap-6">
       <DeliveryDetails />

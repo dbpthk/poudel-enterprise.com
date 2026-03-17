@@ -1,7 +1,7 @@
-import { toast } from "sonner";
 import { db } from "../../../../lib/db";
 import { products } from "../../../../lib/schema";
 import { eq } from "drizzle-orm";
+import { currentUser } from "@clerk/nextjs/server";
 
 export async function GET(req, { params }) {
   try {
@@ -17,10 +17,16 @@ export async function GET(req, { params }) {
 
 export async function PUT(req, { params }) {
   try {
-    const body = await req.json();
+    const user = await currentUser();
+    const isAdmin = user?.publicMetadata?.role === "admin";
 
-    console.log("PUT body:", body);
-    console.log("params.id:", params.id);
+    if (!isAdmin) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+      });
+    }
+
+    const body = await req.json();
 
     if (body.editPassword?.trim() !== process.env.ADMIN_DELETE_PASS?.trim()) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -53,6 +59,15 @@ export async function PUT(req, { params }) {
 }
 
 export async function DELETE(req, { params }) {
+  const user = await currentUser();
+  const isAdmin = user?.publicMetadata?.role === "admin";
+
+  if (!isAdmin) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+    });
+  }
+
   const { password } = await req.json();
 
   if (password !== process.env.ADMIN_DELETE_PASS) {

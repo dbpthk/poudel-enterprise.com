@@ -1,6 +1,7 @@
 import { db } from "../../../lib/db";
 import { products } from "../../../lib/schema";
 import { desc, eq } from "drizzle-orm";
+import { currentUser } from "@clerk/nextjs/server";
 
 export async function GET() {
   try {
@@ -19,6 +20,15 @@ export async function GET() {
 
 export async function POST(req) {
   try {
+    const user = await currentUser();
+    const isAdmin = user?.publicMetadata?.role === "admin";
+
+    if (!isAdmin) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+      });
+    }
+
     const body = await req.json();
 
     if (body.editPassword?.trim() !== process.env.ADMIN_DELETE_PASS?.trim()) {

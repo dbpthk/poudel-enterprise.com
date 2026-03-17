@@ -6,8 +6,7 @@ import { eq } from "drizzle-orm";
 
 export async function GET() {
   try {
-    const user = await currentUser(); // ✅ get current logged-in user
-    console.log("backend user:", user);
+    const user = await currentUser();
 
     if (!user) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -45,7 +44,9 @@ export async function GET() {
       headers: { "Content-Type": "application/json" },
     });
   } catch (err) {
-    console.error("❌ Failed to fetch orders:", err);
+    if (process.env.NODE_ENV === "development") {
+      console.error("Failed to fetch orders:", err);
+    }
     return new Response(JSON.stringify({ error: "Server error" }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

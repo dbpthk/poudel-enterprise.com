@@ -1,7 +1,15 @@
 import fs from "fs/promises";
 import path from "path";
+import { currentUser } from "@clerk/nextjs/server";
 
 export async function POST(req) {
+  const user = await currentUser();
+  const isAdmin = user?.publicMetadata?.role === "admin";
+
+  if (!isAdmin) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const formData = await req.formData();
     const files = formData.getAll("file"); // multiple "file" inputs

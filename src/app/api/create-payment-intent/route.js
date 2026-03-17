@@ -50,9 +50,11 @@ export async function POST(request) {
       orderId,
     });
   } catch (error) {
-    console.error("❌ Internal Error:", error);
+    if (process.env.NODE_ENV === "development") {
+      console.error("Internal Error:", error);
+    }
     return NextResponse.json(
-      { error: `Internal Server Error: ${error.message}` },
+      { error: "Internal Server Error" },
       { status: 500 }
     );
   }

@@ -4,9 +4,6 @@ import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { SignIn, useSignIn, useAuth } from "@clerk/nextjs";
 
-const DEMO_EMAIL = "Demo@enterprise.com";
-const DEMO_PASSWORD = "Demo@enterprise";
-
 export default function SignInPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -34,10 +31,17 @@ export default function SignInPage() {
       setDemoStatus("loading");
 
       try {
+        const res = await fetch("/api/demo-login", { method: "POST" });
+        const data = await res.json();
+
+        if (!res.ok) {
+          setDemoStatus("error");
+          return;
+        }
+
         const result = await signIn.create({
-          strategy: "password",
-          identifier: DEMO_EMAIL,
-          password: DEMO_PASSWORD,
+          strategy: "ticket",
+          ticket: data.token,
         });
 
         const isComplete =
@@ -50,7 +54,9 @@ export default function SignInPage() {
           setDemoStatus("error");
         }
       } catch (err) {
-        console.error("Demo login failed:", err);
+        if (process.env.NODE_ENV === "development") {
+          console.error("Demo login failed:", err);
+        }
         setDemoStatus("error");
       }
     };
@@ -103,7 +109,6 @@ export default function SignInPage() {
           signUpUrl="/sign-up"
           afterSignInUrl="/"
           redirectUrl="/"
-          initialValues={isDemoUser ? { emailAddress: DEMO_EMAIL } : undefined}
         />
       </div>
     </div>
